@@ -9,7 +9,7 @@ const skillRoot = join(root, 'skills', 'dsh-native-playbook')
 
 async function main() {
   const skill = await readFile(join(skillRoot, 'SKILL.md'), 'utf8')
-  const frontmatterMatch = skill.match(/^---\n([\s\S]+?)\n---\n/)
+  const frontmatterMatch = skill.match(/^---\r?\n([\s\S]+?)\r?\n---(?:\r?\n|$)/)
   if (!frontmatterMatch?.[1]) throw new Error('INVALID_SKILL: SKILL.md has no YAML frontmatter.')
   const frontmatter = parse(frontmatterMatch[1])
   if (frontmatter.name !== 'dsh-native-playbook') {
