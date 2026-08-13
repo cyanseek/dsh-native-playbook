@@ -68,6 +68,24 @@ test('English and Chinese READMEs expose the same tested command surface', async
     assert.ok(english.includes(command), `English README is missing ${command}`)
     assert.ok(chinese.includes(command), `Chinese README is missing ${command}`)
   }
+  const installCommands = [
+    'dsh plugin --profile web add github:cyanseek/dsh-native-playbook',
+    'dsh plugin --profile web remove dsh-native-playbook',
+  ]
+  for (const command of installCommands) {
+    assert.ok(english.includes(command), `English README is missing ${command}`)
+    assert.ok(chinese.includes(command), `Chinese README is missing ${command}`)
+  }
+  const internalDetails = [
+    /ctx\.tools/,
+    /cordis\.patch\.yml/,
+    /generated\/upstream\.json/,
+    /dsh\.bundle\.patch/,
+  ]
+  for (const pattern of internalDetails) {
+    assert.doesNotMatch(english, pattern)
+    assert.doesNotMatch(chinese, pattern)
+  }
   await access(join(process.cwd(), 'assets', 'demo.svg'))
 })
 
