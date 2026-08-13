@@ -44,7 +44,7 @@ test('curated task map covers at least 30 intents and has unique ids', async () 
 
 test('SKILL frontmatter is valid and model-invocable by default', async () => {
   const skill = await readFile(join(skillRoot, 'SKILL.md'), 'utf8')
-  const frontmatter = skill.match(/^---\n([\s\S]+?)\n---/)?.[1]
+  const frontmatter = skill.match(/^---\r?\n([\s\S]+?)\r?\n---/)?.[1]
   assert.ok(frontmatter)
   const data = parse(frontmatter)
   assert.equal(data.name, 'dsh-native-playbook')
