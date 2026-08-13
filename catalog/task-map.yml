@@ -1,0 +1,331 @@
+version: 1
+entries:
+  - id: read-text-file
+    category: coding
+    intents: [read a file, view file contents, inspect text file, 查看文件, 读取文本文件]
+    recommendations:
+      - capability: read
+        reason: Read is the native bounded text-file reader and preserves line-oriented context.
+    externalPluginNeeded: false
+
+  - id: inspect-image
+    category: coding
+    intents: [inspect an image, view image, analyze screenshot, 查看图片, 分析截图]
+    recommendations:
+      - capability: read_image
+        reason: Read the image through DSH's native filesystem image surface.
+    externalPluginNeeded: false
+
+  - id: create-file
+    category: coding
+    intents: [create a file, write a new file, overwrite a file, 创建文件, 覆盖文件]
+    recommendations:
+      - capability: write
+        reason: Write is the native surface for creating or replacing complete file content.
+    externalPluginNeeded: false
+
+  - id: precise-edit
+    category: coding
+    intents: [edit a file, make a precise edit, replace text in file, 精确编辑, 修改文件]
+    recommendations:
+      - capability: edit
+        reason: Edit applies a focused native filesystem mutation with observed-state checks.
+    externalPluginNeeded: false
+
+  - id: structured-editor
+    category: coding
+    intents: [use structured editor, apply string replacement, patch several file regions, 字符串替换编辑]
+    recommendations:
+      - capability: str_replace_editor
+        reason: The native structured editor is designed for deterministic view/create/replace operations.
+    externalPluginNeeded: false
+
+  - id: find-files
+    category: coding
+    intents: [find files, locate files by pattern, search filenames, 找文件, 按名称找文件]
+    recommendations:
+      - capability: glob
+        reason: Glob is the native project-aware filename and path-pattern search.
+    externalPluginNeeded: false
+
+  - id: search-text
+    category: coding
+    intents: [search code text, find text occurrences, locate usage, grep the project, 搜索代码, 文本搜索]
+    recommendations:
+      - capability: grep
+        reason: Grep is the native fast textual search and the safe fallback for semantic search.
+    externalPluginNeeded: false
+
+  - id: symbol-navigation
+    category: coding
+    intents: [find all symbol references, go to definition, semantic symbol navigation, 查找符号引用, 跳转定义]
+    recommendations:
+      - capability: lsp
+        reason: LSP understands symbols rather than only matching text.
+        fallback: Use grep for textual occurrences when no LSP provider is configured.
+        statusOverride: requires-provider
+      - capability: grep
+        reason: Grep remains the native fallback when semantic infrastructure is unavailable.
+    externalPluginNeeded: false
+
+  - id: run-shell-command
+    category: execution
+    intents: [run a command, execute shell command, run tests, 运行命令, 执行测试]
+    recommendations:
+      - capability: bash
+        reason: Bash is the native Unix-like command execution surface.
+        fallback: On Windows, use the native pwsh surface.
+    externalPluginNeeded: false
+
+  - id: run-powershell-command
+    category: execution
+    intents: [run powershell, execute pwsh, windows shell command, 运行 PowerShell, Windows 命令]
+    recommendations:
+      - capability: pwsh
+        reason: PowerShell is DSH's platform-native Windows command surface.
+    externalPluginNeeded: false
+
+  - id: background-command
+    category: long-running
+    intents: [run tests in background, run a long command in background, background task, 后台运行测试, 后台长任务]
+    recommendations:
+      - capability: bash
+        usage: run_in_background=true
+        reason: The native shell can start long commands as managed jobs without manual PID files.
+      - capability: job_output
+        reason: Read incremental output and the final exit state from the managed job.
+    externalPluginNeeded: false
+
+  - id: inspect-background-jobs
+    category: long-running
+    intents: [list background jobs, check running jobs, 查看后台任务, 后台任务列表]
+    recommendations:
+      - capability: job_list
+        reason: The native job registry reports managed background processes and their state.
+    externalPluginNeeded: false
+
+  - id: read-background-output
+    category: long-running
+    intents: [read background output, inspect job result, wait for job completion, 查看后台输出, 等待任务完成]
+    recommendations:
+      - capability: job_output
+        reason: Job output supports incremental reads and completion polling without ad-hoc log files.
+    externalPluginNeeded: false
+
+  - id: stop-background-job
+    category: long-running
+    intents: [stop a background job, kill managed job, 停止后台任务, 终止任务]
+    recommendations:
+      - capability: job_kill
+        reason: Stop the managed process through the native job lifecycle.
+    externalPluginNeeded: false
+
+  - id: persistent-terminal
+    category: long-running
+    intents: [open persistent terminal, interactive terminal session, keep shell state, 持久终端, 交互式终端]
+    recommendations:
+      - capability: terminal_open
+        reason: Open an owner-scoped persistent terminal when a terminal provider is configured.
+        statusOverride: requires-provider
+      - capability: terminal_read
+        reason: Read buffered terminal output through the same native session.
+        statusOverride: requires-provider
+    externalPluginNeeded: false
+
+  - id: load-domain-skill
+    category: skills
+    intents: [load a skill, use domain instructions, find agent skill, 加载技能, 使用领域 Skill]
+    recommendations:
+      - capability: skill
+        reason: DSH's native Skill registry discovers and loads focused instruction bundles.
+    externalPluginNeeded: false
+
+  - id: delegate-investigation
+    category: agents
+    intents: [let another agent investigate, delegate independent work, parallel bug investigation, 子 Agent 调查, 委派独立任务]
+    recommendations:
+      - capability: subagent
+        reason: Spawn an independent native child Agent while the parent continues useful work.
+    externalPluginNeeded: false
+
+  - id: fork-parent-context
+    category: agents
+    intents: [fork current context to another agent, reuse parent history, context aware child agent, 复用父历史, Fork 子 Agent]
+    recommendations:
+      - capability: subagent_fork
+        reason: Fork preserves the parent's existing conversation context for a one-shot investigation.
+    externalPluginNeeded: false
+
+  - id: list-agents
+    category: agents
+    intents: [list agents, inspect child agents, see parallel agents, 查看子 Agent, 并行 Agent 列表]
+    recommendations:
+      - capability: list_agents
+        reason: The native control surface reports direct-child identity and lifecycle state.
+    externalPluginNeeded: false
+
+  - id: follow-up-agent
+    category: agents
+    intents: [send follow up to agent, change child requirements, message subagent, 给子 Agent 发消息, 补充子任务]
+    recommendations:
+      - capability: send_message
+        reason: Continue a continuable child with new requirements through the native control channel.
+    externalPluginNeeded: false
+
+  - id: interrupt-agent
+    category: agents
+    intents: [interrupt child agent, stop subagent, 中断子 Agent, 停止 Agent]
+    recommendations:
+      - capability: interrupt_agent
+        reason: Interrupt the child's current turn without inventing process-control scripts.
+    externalPluginNeeded: false
+
+  - id: deterministic-workflow
+    category: orchestration
+    intents: [run deterministic workflow, orchestrate fixed steps, reusable workflow, 固定工作流, 多步骤编排]
+    recommendations:
+      - capability: workflow
+        reason: Workflow is the native surface for reusable deterministic multi-step orchestration.
+    externalPluginNeeded: false
+
+  - id: iterative-objective
+    category: orchestration
+    intents: [iterate on objective with fresh agents, ralph loop, repeated fresh agent work, 迭代目标, Ralph 循环]
+    recommendations:
+      - capability: ralph
+        reason: Ralph runs bounded fresh-Agent rounds against one objective and completion promise.
+    externalPluginNeeded: false
+
+  - id: implementation-checklist
+    category: orchestration
+    intents: [track implementation tasks, maintain todo list, task checklist, 实施清单, 待办列表]
+    recommendations:
+      - capability: todo_write
+        reason: Todo is the native in-session implementation progress surface.
+    externalPluginNeeded: false
+
+  - id: create-long-term-goal
+    category: orchestration
+    intents: [create a long term goal, continue across turns, persistent objective, 创建长期目标, 跨轮目标]
+    recommendations:
+      - capability: create_goal
+        reason: Goals persist an objective and continuation state across turns.
+    externalPluginNeeded: false
+
+  - id: inspect-goal
+    category: orchestration
+    intents: [check goal status, inspect current goal, 查看目标状态, 当前目标]
+    recommendations:
+      - capability: get_goal
+        reason: Read the native persisted objective, state, and usage accounting.
+    externalPluginNeeded: false
+
+  - id: complete-goal
+    category: orchestration
+    intents: [mark goal complete, update goal status, 完成目标, 更新目标状态]
+    recommendations:
+      - capability: update_goal
+        reason: Update terminal goal state only after evidence proves completion or a true blocker.
+    externalPluginNeeded: false
+
+  - id: search-web
+    category: web
+    intents: [search the web, find current information online, internet search, 搜索互联网, 网络检索]
+    recommendations:
+      - capability: web_search
+        reason: Web search is the shipped provider-neutral retrieval surface; its configured provider owns credentials.
+    externalPluginNeeded: false
+
+  - id: fetch-web-page
+    category: web
+    intents: [fetch a web page, download url content, retrieve webpage, 抓取网页, 获取 URL 内容]
+    recommendations:
+      - capability: web_fetch
+        reason: Web fetch exists natively but the shipped base disables it until a safe provider is configured.
+        statusOverride: disabled
+    externalPluginNeeded: false
+
+  - id: ask-user-choice
+    category: interaction
+    intents: [ask user to choose, request missing user input, user owned decision, 询问用户选择, 缺少用户信息]
+    recommendations:
+      - capability: ask_user_question
+        reason: Use the native question surface only for user-owned choices or non-discoverable ambiguity.
+    externalPluginNeeded: false
+
+  - id: submit-plan
+    category: interaction
+    intents: [submit plan for approval, exit plan mode, review implementation plan, 提交计划, 退出计划模式]
+    recommendations:
+      - capability: exit_plan_mode
+        reason: Plan mode has a dedicated approval and transition surface.
+    externalPluginNeeded: false
+
+  - id: search-sessions
+    category: sessions
+    intents: [search previous sessions, find conversation history, session full text search, 搜索历史 Session, 搜索会话]
+    recommendations:
+      - capability: session_search
+        reason: Session query provides native workspace-authorized history search when its backend is enabled.
+    externalPluginNeeded: false
+
+  - id: search-session-events
+    category: sessions
+    intents: [search session events, find prior tool event, 搜索会话事件, 查找历史工具调用]
+    recommendations:
+      - capability: session_event_search
+        reason: Search durable session events without manually grepping persistence files.
+    externalPluginNeeded: false
+
+  - id: trace-session-lineage
+    category: sessions
+    intents: [trace session lineage, inspect parent child sessions, 会话血缘, 追踪 Session]
+    recommendations:
+      - capability: session_trace
+        reason: Session trace is the native lineage view for related sessions.
+    externalPluginNeeded: false
+
+  - id: code-mode-composition
+    category: orchestration
+    intents: [compose tools in code mode, run parallel tool calls, code mode, Code Mode 组合工具, 并行工具调用]
+    recommendations:
+      - capability: run_code
+        reason: Code Mode is the native composition transport for typed concurrent tool calls.
+    externalPluginNeeded: false
+
+  - id: schedule-task
+    category: orchestration
+    intents: [schedule a recurring task, create a schedule, 定时任务, 创建计划任务]
+    recommendations:
+      - capability: schedule_create
+        reason: Use DSH's native schedule surface when the schedule package is mounted.
+    externalPluginNeeded: false
+
+  - id: list-schedules
+    category: orchestration
+    intents: [list schedules, inspect recurring tasks, 查看定时任务, 计划任务列表]
+    recommendations:
+      - capability: schedule_list
+        reason: Read scheduled jobs through the native schedule registry.
+    externalPluginNeeded: false
+
+  - id: remove-schedule
+    category: orchestration
+    intents: [delete a schedule, remove recurring task, 删除定时任务, 移除计划任务]
+    recommendations:
+      - capability: schedule_delete
+        reason: Delete the selected schedule through the owning native service.
+    externalPluginNeeded: false
+
+  - id: avoid-background-plugin
+    category: native-first
+    intents: [build a custom plugin for background jobs, install plugin for background tasks, custom background process manager, 为后台任务开发插件, 安装后台任务插件]
+    recommendations:
+      - capability: bash
+        usage: run_in_background=true
+        reason: DSH already starts managed background commands; a new plugin would duplicate native behavior.
+      - capability: job_output
+        reason: Native jobs already expose incremental output and completion state.
+      - capability: job_kill
+        reason: Native jobs already own cancellation.
+    externalPluginNeeded: false

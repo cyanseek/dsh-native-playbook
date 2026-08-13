@@ -1,0 +1,3 @@
+- insert:
+    - id: native-playbook
+      name: 'dsh-native-playbook/plugin'

@@ -1,0 +1,37 @@
+name: Capability mapping
+description: Propose or correct a task-to-native-capability mapping.
+title: "mapping: "
+labels: [capability-mapping]
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Natural-language task
+      description: What would a user ask an Agent to do?
+    validations:
+      required: true
+  - type: input
+    id: capability
+    attributes:
+      label: Proposed native capability
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Official DSH evidence
+      description: Link the current upstream tool, config, bundle, or provider evidence.
+    validations:
+      required: true
+  - type: dropdown
+    id: availability
+    attributes:
+      label: Availability classification
+      options:
+        - ready
+        - platform-dependent
+        - opt-in
+        - requires-provider
+        - disabled
+    validations:
+      required: true

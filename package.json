@@ -1,0 +1,94 @@
+{
+  "name": "dsh-native-playbook",
+  "version": "0.1.0",
+  "description": "DSH plugin, Agent Skill, and CLI for choosing native DeepSeek Harness capabilities.",
+  "type": "module",
+  "license": "MIT",
+  "author": "cyanseek",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyanseek/dsh-native-playbook.git"
+  },
+  "homepage": "https://github.com/cyanseek/dsh-native-playbook#readme",
+  "bugs": {
+    "url": "https://github.com/cyanseek/dsh-native-playbook/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "deepseek",
+    "cordis",
+    "agent-skills",
+    "codex",
+    "coding-agent",
+    "ai-agents",
+    "playbook",
+    "cli",
+    "subagents",
+    "workflow"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.34.5",
+  "files": [
+    "dist",
+    ".codex-plugin",
+    "assets",
+    "catalog",
+    "generated",
+    "skills",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "dsh-native": "./dist/cli.js"
+  },
+  "main": "./dist/api.js",
+  "types": "./dist/api.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/api.d.ts",
+      "import": "./dist/api.js"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dsh-native": "tsx src/cli.ts",
+    "lint": "node scripts/lint.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "validate:skill": "node scripts/validate-skill.mjs",
+    "validate:plugin": "node scripts/validate-plugin.mjs",
+    "validate:dsh-plugin": "node scripts/validate-dsh-plugin.mjs",
+    "sync:upstream": "node scripts/sync-upstream.mjs",
+    "verify:upstream": "node scripts/verify-upstream.mjs",
+    "smoke:json": "node scripts/smoke-json.mjs",
+    "prepare": "pnpm build",
+    "prepack": "pnpm build && pnpm validate:skill && pnpm validate:plugin && pnpm validate:dsh-plugin && pnpm verify:upstream"
+  },
+  "dependencies": {
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
