@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-16
+
+### Added
+
+- Five-stage capability lifecycle with provider-aware operational readiness.
+- Version-gated activation planning, activation, verification, deactivation, and automatic rollback APIs.
+- First reviewed Tier-1 recipe for official workspace-authorized session full-text search.
+- Automatic runtime activation through the existing `native_capability` tool.
+- Consumer-install smoke coverage and machine-readable `llms.txt` discovery metadata.
+
+### Changed
+
+- GitHub installations now consume committed prebuilt artifacts without build approval.
+- Runtime guidance is intentionally small and prioritizes operational official DSH capabilities.
+- English and Chinese READMEs now lead with the one-command DSH journey and real scenarios.
+
+### Removed
+
+- Consumer lifecycle build scripts, including `prepare`.
+
 ## [0.1.0] - 2026-08-14
 
 ### Added
@@ -19,5 +39,6 @@ All notable changes to this project are documented here. The format follows
 - Profile-aware CLI, offline lookup, JSON output, Node API, and safe Skill installer.
 - Cross-platform CI and open-source project policies.
 
-[Unreleased]: https://github.com/cyanseek/dsh-native-playbook/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/cyanseek/dsh-native-playbook/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/cyanseek/dsh-native-playbook/compare/v0.1.0...v0.2.1
 [0.1.0]: https://github.com/cyanseek/dsh-native-playbook/releases/tag/v0.1.0

@@ -1,74 +1,86 @@
 # dsh-native-playbook
 
-**Use what DeepSeek Harness already ships before building more.**
+**Find the DeepSeek Harness capability you already have—and make the safe path usable.**
 
 [![CI](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-`dsh-native-playbook` maps everyday tasks to built-in
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) capabilities and checks
-whether those capabilities are available in the current DSH profile.
-
-> task → native capability → availability → recommended action
+`dsh-native-playbook` is a community plugin for
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), not a separate agent
+runtime. It adds one `native_capability` tool that routes a task to official DSH tools,
+checks whether the complete capability is operational, and safely activates a reviewed
+native path when possible.
 
 [简体中文](./README.zh-CN.md)
 
-![A terminal lookup maps a background test task to native bash and job output capabilities.](./assets/demo.svg)
+## Quick start
 
-## Why
-
-DSH already includes tools for files, shell commands, background jobs, code search,
-subagents, workflows, goals, web access, sessions, and more. The difficult part is knowing
-which capability fits a task and whether the active profile has everything it needs.
-
-```text
-Run tests in the background
-→ bash(run_in_background=true) → job_output
-
-Find every symbol reference
-→ lsp → grep fallback when no LSP provider is ready
-
-Let another agent investigate while I keep working
-→ subagent → list_agents / send_message
-```
-
-## Highlights
-
-- **Native-first recommendations** — check DSH before adding another plugin or workaround.
-- **Real profile awareness** — distinguish ready, opt-in, disabled, and provider-dependent paths.
-- **DSH runtime plugin** — expose the `native_capability` tool inside a DSH profile.
-- **Agent Skill** — give Codex and compatible agents focused task recipes.
-- **CLI and Node API** — use the same results in terminals, scripts, and integrations.
-- **Offline by default** — static lookup has no telemetry and makes no install-time network request.
-
-## Install
-
-### DSH plugin
-
-Install directly from GitHub into a DSH profile:
+Install the prebuilt GitHub package into your DSH profile:
 
 ```bash
 dsh plugin --profile web add github:cyanseek/dsh-native-playbook
 ```
 
-Verify that the plugin is part of the profile:
+Then use DSH normally. Ask for the outcome, not the package:
 
-```bash
-dsh --profile web --dump-config
+```text
+Run the test suite in the background and tell me when it finishes.
+Find every reference to this symbol.
+Search previous sessions for the deployment decision.
 ```
 
-Remove it with:
+There is no repository clone, local build, build approval, API key, daemon, or manual
+verification step in this path. The npm package name is reserved for a later release; until
+then, the GitHub command above is the supported install route.
 
-```bash
-dsh plugin --profile web remove dsh-native-playbook
-```
+## What changes for common tasks
 
-Git-based installation builds the package from source. If pnpm asks you to approve the
-package build, follow the command shown by pnpm and run the install again.
+| Task | Preferred native path | Behavior |
+| --- | --- | --- |
+| Long-running command | `bash(run_in_background=true)` → `job_output` | Ready on supported Unix-like profiles; use `pwsh` on Windows. |
+| Symbol navigation | `lsp` | Uses LSP only with a working provider; otherwise falls back to `grep` and `glob`. |
+| Prior-session search | `session_search` | Uses the official workspace-authorized query tools. A reviewed first-use activation is available on tested DSH versions and reports when a DSH restart is required. |
+| Delegated investigation | `subagent` → `list_agents` / `send_message` | Uses DSH's built-in child-agent lifecycle. |
+| Fixed multi-step work | `workflow` | Prefers the deterministic native workflow engine over shell orchestration. |
 
-### Agent Skill
+The plugin never treats “a package exists” or “a tool name is visible” as proof that a
+capability works.
 
-Install the Skill for Codex:
+## Readiness you can trust
+
+Every recommendation separates five lifecycle facts:
+
+| Fact | Question answered |
+| --- | --- |
+| `shipped` | Does the tested DSH catalog include it? |
+| `mounted` | Is its tool or service in the effective profile? |
+| `visible` | Can the calling Agent currently see it? |
+| `providerReady` | Are provider prerequisites actually satisfied? |
+| `operational` | Can the Agent use it now? |
+
+The summary state is one of `ready`, `platform-dependent`, `opt-in`,
+`requires-provider`, `disabled`, or `unsupported`. Conditional changes also report their
+effect as `immediate`, `next-turn`, `new-session`, or `restart`.
+
+## Safe activation
+
+Activation is deliberately narrow:
+
+- Only reviewed recipes shipped in this repository can change a profile.
+- The active DSH version must pass an explicit compatibility gate.
+- Credentials, security policy, network providers, and arbitrary commands are outside the
+  activation surface.
+- Every change is checked against DSH and is reversible; failed verification leaves the
+  original profile in place.
+- Deactivation restores the exact saved content and refuses to overwrite later user edits.
+
+The first Tier-1 recipe enables DSH's official, workspace-authorized session full-text
+search with a lazy local index. DSH `0.1.0-rc.6` is the currently verified activation
+target. Static lookup remains useful on other versions, while mutation is withheld.
+
+## Agent Skill
+
+The same native-first guidance is available as an Agent Skill:
 
 ```bash
 npx skills@latest add cyanseek/dsh-native-playbook \
@@ -77,42 +89,12 @@ npx skills@latest add cyanseek/dsh-native-playbook \
   --yes
 ```
 
-For a shared project installation, the CLI can also copy the Skill into a DSH-compatible
-Skill directory:
+The Skill is focused and loads only the reference needed for the current task.
 
-```bash
-pnpm dsh-native install --target project
-pnpm dsh-native install --target dsh
-```
+## CLI
 
-### CLI from a checkout
-
-Requirements: Node.js 22 or 24 and pnpm 10 or later.
-
-```bash
-git clone https://github.com/cyanseek/dsh-native-playbook.git
-cd dsh-native-playbook
-corepack enable
-pnpm install --frozen-lockfile
-pnpm build
-
-pnpm dsh-native lookup "run tests in background"
-pnpm dsh-native status --profile web
-```
-
-The package is not yet published to npm. Use the GitHub or checkout routes above.
-
-## Usage
-
-Inside an installed DSH profile, ask naturally:
-
-```text
-Which native DSH capability should I use to run tests in the background?
-```
-
-The `native_capability` tool returns the native recommendation and current availability.
-
-The CLI supports human-readable and JSON output:
+The CLI is an advanced inspection and automation surface. Every command supports stable
+JSON output where shown:
 
 ```text
 dsh-native lookup "<task>" [--profile <name>] [--json]
@@ -121,27 +103,19 @@ dsh-native list [--profile <name>] [--json]
 dsh-native explain <capability> [--profile <name>] [--json]
 dsh-native doctor [--json]
 dsh-native install --target project|dsh [--json]
+dsh-native plan <capability> --profile <name> [--json]
+dsh-native activate <capability> --profile <name> [--json]
+dsh-native deactivate <capability> --profile <name> [--json]
+dsh-native verify <capability> --profile <name> [--json]
 ```
 
-Examples:
+Examples from a development checkout:
 
 ```bash
 pnpm dsh-native lookup "find all symbol references" --json
-pnpm dsh-native lookup "build a custom plugin for background jobs" --json
-pnpm dsh-native explain subagent --profile headless
+pnpm dsh-native status --profile web --json
+pnpm dsh-native plan session_search --profile web --json
 ```
-
-## Availability states
-
-| State | Meaning |
-| --- | --- |
-| `ready` | The active profile can use the capability. |
-| `platform-dependent` | Availability depends on the operating system. |
-| `opt-in` | DSH provides it, but the profile has not enabled it. |
-| `requires-provider` | The tool exists, but a provider is still required. |
-| `disabled` | The capability is present but disabled in the profile. |
-
-Package presence alone is never treated as proof that a capability is ready.
 
 ## Node API
 
@@ -149,27 +123,38 @@ Package presence alone is never treated as proof that a capability is ready.
 import {
   inspectDshProfile,
   lookupNativeCapability,
+  planNativeActivation,
 } from 'dsh-native-playbook'
 
 const profile = await inspectDshProfile({ profile: 'web' })
 const result = await lookupNativeCapability('run a long test in background', { profile })
+const plan = await planNativeActivation('session_search', { profile: 'web' })
 ```
 
-The public API includes `lookupNativeCapability`, `listNativeCapabilities`,
-`explainNativeCapability`, `inspectDshProfile`, and `loadTaskMap`.
+The public API also exports `listNativeCapabilities`, `explainNativeCapability`,
+`activateNativeCapability`, `deactivateNativeCapability`, and
+`verifyNativeCapability`. Public API functions never prompt.
 
-## Scope and compatibility
+## Compatibility and privacy
 
-- This is a community DSH extension, not an official DeepSeek project.
-- It covers native capability selection; it is not a third-party plugin marketplace.
-- Static lookup works without DSH. Profile-aware status requires a working `dsh` command and
-  an existing profile.
-- Capability mappings are verified against a pinned revision of the official DSH source.
-- No API function prompts, sends telemetry, or reads credentials.
+- Requires Node.js 22 or 24 and DeepSeek Harness.
+- Capability facts are pinned to an official DSH source revision.
+- Static lookup works without DSH; live readiness needs an existing DSH profile.
+- No telemetry is collected.
+- No API accesses credential stores or private session contents.
+- This project is a community extension and is not affiliated with or endorsed by
+  DeepSeek.
+
+## Remove
+
+```bash
+dsh plugin --profile web remove dsh-native-playbook
+```
 
 ## Development
 
 ```bash
+corepack enable
 pnpm install --frozen-lockfile
 pnpm lint
 pnpm typecheck
@@ -180,19 +165,14 @@ pnpm validate:plugin
 pnpm validate:dsh-plugin
 pnpm verify:upstream
 pnpm smoke:json
+pnpm smoke:consumer
 ```
 
-CI runs the same checks on Linux, macOS, and Windows with Node.js 22 and 24.
+CI runs the gates on Linux, macOS, and Windows with Node.js 22 and 24, plus a clean GitHub
+consumer-install check.
 
-## Contributing
-
-Missing task mappings, better native fallbacks, profile corrections, and concise recipes are
-welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## Security
-
-Please report vulnerabilities according to [SECURITY.md](./SECURITY.md). Do not include
-credentials or private profile dumps in public issues.
+See [CONTRIBUTING.md](./CONTRIBUTING.md), [SECURITY.md](./SECURITY.md), and
+[CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 

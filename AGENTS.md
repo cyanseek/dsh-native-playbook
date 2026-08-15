@@ -16,6 +16,7 @@ recommending an external plugin or custom workaround.
 
 - `catalog/task-map.yml`: curated task-to-capability mappings.
 - `generated/`: deterministic facts generated from one official upstream commit.
+- `activation-recipes/`: reviewed, version-gated, reversible native activation recipes.
 - `skills/dsh-native-playbook/`: concise Skill plus focused references.
 - `.codex-plugin/plugin.json`: thin Codex skill-only plugin adapter over `skills/`.
 - `cordis.patch.yml`: installable DSH bundle layer for the runtime adapter.
@@ -51,6 +52,7 @@ pnpm validate:plugin
 pnpm validate:dsh-plugin
 pnpm verify:upstream
 pnpm smoke:json
+pnpm smoke:consumer
 ```
 
 Run the complete set before release. Use `pnpm sync:upstream -- --source-dir <checkout>`
@@ -65,6 +67,11 @@ when validating against a trusted local upstream checkout.
 - The Codex manifest must point to the same `./skills/` tree and never duplicate resolver data.
 - Never recommend an external plugin before checking the native task map.
 - Never classify a capability as ready without effective profile and provider evidence.
+- Keep `shipped`, `mounted`, `visible`, `providerReady`, and `operational` distinct.
+- Activation must be allowlisted, version-gated, atomic, verified, and reversible.
+- Activation must never mutate credentials, security policy, or arbitrary provider settings.
+- Do not require users to run status or verification commands in the normal DSH journey.
+- Keep prebuilt `dist/` artifacts committed and never add `prepare`, `install`, or `postinstall`.
 - Installers must refuse to overwrite a destination owned by another Skill.
 - No telemetry, `postinstall`, credential output, or install-time network fetch.
 
@@ -79,5 +86,6 @@ Keep the main Skill short and put detailed domain guidance in the matching refer
 1. Sync and verify the upstream snapshot.
 2. Run every command in the test gate above on a supported Node version.
 3. Review the packed file list and CLI JSON smoke output.
-4. Confirm the changelog and version agree.
-5. Tag and publish only through an explicitly authorized release operation.
+4. Run the clean consumer installation smoke without build approval.
+5. Confirm the changelog and version agree.
+6. Tag and publish only through an explicitly authorized release operation.

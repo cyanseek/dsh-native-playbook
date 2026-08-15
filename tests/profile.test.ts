@@ -49,6 +49,26 @@ test('derives capability status from effective rows and providers', async () => 
   assert.equal(result.capabilityStatuses.web_search, 'ready')
   assert.equal(result.capabilityStatuses.web_fetch, 'disabled')
   assert.equal(result.capabilityStatuses.run_code, 'opt-in')
+  assert.equal(result.capabilityLifecycles.lsp?.mounted, true)
+  assert.equal(result.capabilityLifecycles.lsp?.providerReady, false)
+  assert.equal(result.capabilityLifecycles.lsp?.operational, false)
+})
+
+test('requires both the official session tool and a search-ready query provider', async () => {
+  const snapshot = await loadUpstreamSnapshot()
+  const active = parseProfileConfig('fixture', `${profile}
+    - id: session-query-sqlite
+      name: '@deepseek-ai/dsh-session-query-sqlite'
+      config:
+        path: ':memory:'
+        openAt: first-search
+    - id: tool-session-query
+      name: 'dsh-native-playbook/session-query'
+`, snapshot, ['session_search'])
+  assert.equal(active.capabilityStatuses.session_search, 'ready')
+  assert.equal(active.capabilityLifecycles.session_search?.providerReady, true)
+  assert.equal(active.capabilityLifecycles.session_search?.visible, true)
+  assert.equal(active.capabilityLifecycles.session_search?.operational, true)
 })
 
 test('rejects unsafe profile names before executing DSH', async () => {

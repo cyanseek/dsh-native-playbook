@@ -63,6 +63,10 @@ test('English and Chinese READMEs expose the same tested command surface', async
     'explain <capability>',
     'doctor [--json]',
     'install --target project|dsh',
+    'plan <capability> --profile <name>',
+    'activate <capability> --profile <name>',
+    'deactivate <capability> --profile <name>',
+    'verify <capability> --profile <name>',
   ]
   for (const command of commands) {
     assert.ok(english.includes(command), `English README is missing ${command}`)
@@ -86,6 +90,10 @@ test('English and Chinese READMEs expose the same tested command surface', async
     assert.doesNotMatch(english, pattern)
     assert.doesNotMatch(chinese, pattern)
   }
+  assert.doesNotMatch(english, /approve-builds|allowBuilds|run the install again/i)
+  assert.doesNotMatch(chinese, /approve-builds|allowBuilds|重新安装|重新运行安装/i)
+  assert.match(english, /not a separate agent\s+runtime/i)
+  assert.match(chinese, /不是独立的\s*Agent runtime/i)
   await access(join(process.cwd(), 'assets', 'demo.svg'))
 })
 
@@ -94,8 +102,22 @@ test('Codex plugin manifest is a thin adapter over the same Skill tree', async (
     await readFile(join(process.cwd(), '.codex-plugin', 'plugin.json'), 'utf8'),
   )
   assert.equal(manifest.name, 'dsh-native-playbook')
-  assert.equal(manifest.version, '0.1.0')
+  assert.equal(manifest.version, '0.2.1')
   assert.equal(manifest.skills, './skills/')
   assert.equal(manifest.mcpServers, undefined)
   assert.equal(manifest.apps, undefined)
+})
+
+test('ships prebuilt consumer artifacts with no install-time build hook', async () => {
+  const manifest = JSON.parse(await readFile(join(process.cwd(), 'package.json'), 'utf8'))
+  assert.equal(manifest.version, '0.2.1')
+  assert.equal(manifest.scripts.prepare, undefined)
+  assert.equal(manifest.scripts.install, undefined)
+  assert.equal(manifest.scripts.postinstall, undefined)
+  assert.ok(manifest.files.includes('dist'))
+  assert.ok(manifest.files.includes('activation-recipes'))
+  assert.ok(manifest.files.includes('llms.txt'))
+  for (const artifact of ['api.js', 'plugin.js', 'session-query.js', 'cli.js']) {
+    await access(join(process.cwd(), 'dist', artifact))
+  }
 })

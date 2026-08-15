@@ -1,72 +1,81 @@
 # dsh-native-playbook
 
-**先用好 DeepSeek Harness 已经提供的能力，再考虑重复开发。**
+**找到 DeepSeek Harness 已经具备的能力，并让安全路径真正可用。**
 
 [![CI](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-`dsh-native-playbook` 把日常任务映射到
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 原生能力，并检查这些能力
-在当前 DSH profile 中是否可用。
-
-> 任务 → 原生能力 → 可用状态 → 推荐操作
+`dsh-native-playbook` 是连接
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的社区插件，不是独立的
+Agent runtime。它只增加一个 `native_capability` 工具：把任务路由到 DSH 官方能力，判断整条
+能力链是否可运行，并在条件明确时安全激活经过审核的原生路径。
 
 [English](./README.md)
 
-![终端查询把后台测试任务映射到原生 bash 与 job_output 能力。](./assets/demo.svg)
+## 快速开始
 
-## 为什么需要它
-
-DSH 已经包含文件、Shell、后台任务、代码搜索、Subagent、Workflow、Goal、Web、Session
-等大量能力。真正困难的是判断当前任务该用哪个能力，以及当前 profile 是否已经具备完整条件。
-
-```text
-后台运行测试
-→ bash(run_in_background=true) → job_output
-
-查找符号的全部引用
-→ lsp → LSP provider 未就绪时回退 grep
-
-让另一个 Agent 调查，我继续工作
-→ subagent → list_agents / send_message
-```
-
-## 亮点
-
-- **原生优先**：安装新插件或编写 workaround 前，先检查 DSH 已有能力。
-- **真实 profile 状态**：区分 ready、opt-in、disabled 和 provider 依赖。
-- **DSH runtime plugin**：在 DSH profile 内提供 `native_capability` 工具。
-- **Agent Skill**：为 Codex 和兼容 Agent 提供聚焦的任务配方。
-- **CLI 与 Node API**：可在终端、脚本和集成中使用相同结果。
-- **默认离线**：静态查询没有遥测，也不会在安装时主动访问外部服务。
-
-## 安装
-
-### DSH 插件
-
-从 GitHub 直接安装到 DSH profile：
+把预构建的 GitHub package 安装到 DSH profile：
 
 ```bash
 dsh plugin --profile web add github:cyanseek/dsh-native-playbook
 ```
 
-确认插件已经进入 profile：
+然后照常使用 DSH，直接描述目标，不需要记 package 名：
 
-```bash
-dsh --profile web --dump-config
+```text
+在后台运行测试，结束后告诉我结果。
+查找这个符号的全部引用。
+从历史会话里查找部署方案。
 ```
 
-卸载命令：
+这条路径不需要 clone 仓库、本地构建、批准构建脚本、API key、守护进程或手工验证。
+npm package 名留给后续正式发布；在此之前，上面的 GitHub 命令是受支持的安装方式。
 
-```bash
-dsh plugin --profile web remove dsh-native-playbook
-```
+## 常见任务会发生什么
 
-Git 安装会从源码构建 package。如果 pnpm 提示需要批准构建，请按它显示的命令处理后重新安装。
+| 任务 | 优先使用的原生路径 | 实际行为 |
+| --- | --- | --- |
+| 长时间命令 | `bash(run_in_background=true)` → `job_output` | 在支持的类 Unix profile 中直接可用；Windows 使用 `pwsh`。 |
+| 符号导航 | `lsp` | 只有 provider 真正就绪时才用 LSP，否则回退 `grep` 和 `glob`。 |
+| 历史会话搜索 | `session_search` | 使用官方、受 workspace 授权的查询工具；在经过验证的 DSH 版本中可首次使用时自动激活，并明确报告是否需要重启 DSH。 |
+| 委派调查 | `subagent` → `list_agents` / `send_message` | 使用 DSH 内置的子 Agent 生命周期。 |
+| 固定多步骤任务 | `workflow` | 优先使用确定性的原生工作流引擎，而不是 Shell 编排。 |
 
-### Agent Skill
+插件不会把“package 存在”或“看到了工具名”误判为能力已经可用。
 
-为 Codex 安装 Skill：
+## 可相信的就绪判断
+
+每条推荐会区分五个生命周期事实：
+
+| 事实 | 回答的问题 |
+| --- | --- |
+| `shipped` | 经过验证的 DSH 目录是否包含它？ |
+| `mounted` | 工具或服务是否进入有效 profile？ |
+| `visible` | 当前调用 Agent 能否看到它？ |
+| `providerReady` | provider 前置条件是否真的满足？ |
+| `operational` | Agent 现在能否使用它？ |
+
+汇总状态为 `ready`、`platform-dependent`、`opt-in`、`requires-provider`、
+`disabled` 或 `unsupported`。条件变更还会报告 `immediate`、`next-turn`、
+`new-session` 或 `restart` 的生效时机。
+
+## 安全激活
+
+激活能力被刻意限制在很小的范围：
+
+- 只能执行仓库中已经审核的配方。
+- 当前 DSH 版本必须通过明确的兼容性门禁。
+- 凭据、安全策略、网络 provider 和任意命令不在激活范围内。
+- 每次修改都交给 DSH 校验且可恢复；验证失败时保留原始 profile。
+- 停用时恢复精确保存的内容；如果用户后来修改过文件，则拒绝覆盖新修改。
+
+第一条 Tier-1 配方会启用 DSH 官方、受 workspace 授权的会话全文搜索，并使用延迟打开的
+本地索引。当前已验证的激活目标是 DSH `0.1.0-rc.6`。其他版本仍可使用静态查询，但不会
+执行未经验证的配置修改。
+
+## Agent Skill
+
+相同的原生优先指导也以 Agent Skill 提供：
 
 ```bash
 npx skills@latest add cyanseek/dsh-native-playbook \
@@ -75,41 +84,11 @@ npx skills@latest add cyanseek/dsh-native-playbook \
   --yes
 ```
 
-如果要在项目或 DSH 用户目录共享 Skill，也可以使用 CLI：
+Skill 保持聚焦，只加载当前任务所需的参考资料。
 
-```bash
-pnpm dsh-native install --target project
-pnpm dsh-native install --target dsh
-```
+## CLI
 
-### 从 checkout 运行 CLI
-
-需要 Node.js 22 或 24，以及 pnpm 10 或更高版本。
-
-```bash
-git clone https://github.com/cyanseek/dsh-native-playbook.git
-cd dsh-native-playbook
-corepack enable
-pnpm install --frozen-lockfile
-pnpm build
-
-pnpm dsh-native lookup "后台运行测试"
-pnpm dsh-native status --profile web
-```
-
-当前尚未发布 npm package，请使用上面的 GitHub 或 checkout 安装方式。
-
-## 使用
-
-安装到 DSH profile 后，可以直接用自然语言询问：
-
-```text
-后台运行测试应该优先使用哪个 DSH 原生能力？
-```
-
-`native_capability` 工具会返回原生推荐与当前可用状态。
-
-CLI 同时支持人类可读和 JSON 输出：
+CLI 是面向高级检查与自动化的界面。下面标注的命令都支持稳定 JSON 输出：
 
 ```text
 dsh-native lookup "<task>" [--profile <name>] [--json]
@@ -118,27 +97,19 @@ dsh-native list [--profile <name>] [--json]
 dsh-native explain <capability> [--profile <name>] [--json]
 dsh-native doctor [--json]
 dsh-native install --target project|dsh [--json]
+dsh-native plan <capability> --profile <name> [--json]
+dsh-native activate <capability> --profile <name> [--json]
+dsh-native deactivate <capability> --profile <name> [--json]
+dsh-native verify <capability> --profile <name> [--json]
 ```
 
-示例：
+在开发 checkout 中的示例：
 
 ```bash
 pnpm dsh-native lookup "查找全部符号引用" --json
-pnpm dsh-native lookup "为后台任务开发自定义插件" --json
-pnpm dsh-native explain subagent --profile headless
+pnpm dsh-native status --profile web --json
+pnpm dsh-native plan session_search --profile web --json
 ```
-
-## 可用状态
-
-| 状态 | 含义 |
-| --- | --- |
-| `ready` | 当前 profile 可以使用该能力。 |
-| `platform-dependent` | 是否可用取决于操作系统。 |
-| `opt-in` | DSH 已提供，但当前 profile 尚未启用。 |
-| `requires-provider` | 工具存在，但仍需配置 provider。 |
-| `disabled` | 能力已存在，但在当前 profile 中被禁用。 |
-
-仅仅存在一个 package，不会被当成能力已经 ready 的证据。
 
 ## Node API
 
@@ -146,26 +117,37 @@ pnpm dsh-native explain subagent --profile headless
 import {
   inspectDshProfile,
   lookupNativeCapability,
+  planNativeActivation,
 } from 'dsh-native-playbook'
 
 const profile = await inspectDshProfile({ profile: 'web' })
 const result = await lookupNativeCapability('后台运行一个耗时测试', { profile })
+const plan = await planNativeActivation('session_search', { profile: 'web' })
 ```
 
-公开 API 包括 `lookupNativeCapability`、`listNativeCapabilities`、
-`explainNativeCapability`、`inspectDshProfile` 和 `loadTaskMap`。
+公开 API 还导出 `listNativeCapabilities`、`explainNativeCapability`、
+`activateNativeCapability`、`deactivateNativeCapability` 和
+`verifyNativeCapability`。公开 API 不会弹出交互式询问。
 
-## 范围与兼容性
+## 兼容性与隐私
 
-- 这是社区维护的 DSH 扩展，不是 DeepSeek 官方项目。
-- 它解决原生能力选择问题，不是第三方插件市场。
-- 静态查询不要求安装 DSH；profile 状态检查需要可用的 `dsh` 命令和已存在的 profile。
-- 能力映射会针对 DSH 官方源码的固定版本进行验证。
-- 所有 API 都不会主动询问用户、发送遥测或读取凭据。
+- 需要 Node.js 22 或 24，以及 DeepSeek Harness。
+- 能力事实固定到 DSH 官方源码的一个明确 revision。
+- 静态查询不要求 DSH；实时就绪判断需要已存在的 DSH profile。
+- 不收集遥测。
+- API 不访问凭据存储或私有会话内容。
+- 本项目是社区扩展，与 DeepSeek 不存在官方从属或背书关系。
+
+## 卸载
+
+```bash
+dsh plugin --profile web remove dsh-native-playbook
+```
 
 ## 开发
 
 ```bash
+corepack enable
 pnpm install --frozen-lockfile
 pnpm lint
 pnpm typecheck
@@ -176,19 +158,14 @@ pnpm validate:plugin
 pnpm validate:dsh-plugin
 pnpm verify:upstream
 pnpm smoke:json
+pnpm smoke:consumer
 ```
 
-CI 在 Linux、macOS、Windows 的 Node.js 22 和 24 上运行同样的检查。
+CI 会在 Linux、macOS、Windows 的 Node.js 22 和 24 上运行这些门禁，并额外执行干净的
+GitHub 消费者安装检查。
 
-## 参与贡献
-
-欢迎补充缺失的任务映射、更好的原生 fallback、profile 状态修正和简洁配方。详见
-[CONTRIBUTING.md](./CONTRIBUTING.md)。
-
-## 安全
-
-请按照 [SECURITY.md](./SECURITY.md) 报告安全问题。不要在公开 Issue 中提交凭据或私有
-profile dump。
+另见 [CONTRIBUTING.md](./CONTRIBUTING.md)、[SECURITY.md](./SECURITY.md) 和
+[CHANGELOG.md](./CHANGELOG.md)。
 
 ## 许可证
 

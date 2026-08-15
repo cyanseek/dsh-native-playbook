@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process'
 import {
+  activateNativeCapability,
+  deactivateNativeCapability,
   explainNativeCapability,
   listNativeCapabilities,
   loadUpstreamSnapshot,
   lookupNativeCapability,
+  planNativeActivation,
+  verifyNativeCapability,
 } from './api.js'
 import { asNativePlaybookError, NativePlaybookError } from './errors.js'
 import { installSkill } from './install.js'
@@ -25,19 +29,20 @@ async function main(argv: string[]): Promise<void> {
     return
   }
   if (args.command === '--version' || args.command === '-V') {
-    process.stdout.write('0.1.0\n')
+    process.stdout.write('0.2.1\n')
     return
   }
 
-  const profile = args.profile ? await inspectDshProfile({ profile: args.profile }) : undefined
   switch (args.command) {
     case 'lookup': {
+      const profile = args.profile ? await inspectDshProfile({ profile: args.profile }) : undefined
       const task = args.positionals.join(' ').trim()
       const result = await lookupNativeCapability(task, { ...(profile ? { profile } : {}) })
       emit(args.json, result, formatLookup(result))
       return
     }
     case 'status': {
+      const profile = args.profile ? await inspectDshProfile({ profile: args.profile }) : undefined
       if (!profile || !args.profile) {
         throw new NativePlaybookError('PROFILE_NOT_FOUND', 'status requires --profile <name>.')
       }
@@ -46,15 +51,49 @@ async function main(argv: string[]): Promise<void> {
       return
     }
     case 'list': {
+      const profile = args.profile ? await inspectDshProfile({ profile: args.profile }) : undefined
       const capabilities = await listNativeCapabilities(profile)
       emit(args.json, { capabilities }, formatCapabilities(capabilities))
       return
     }
     case 'explain': {
+      const profile = args.profile ? await inspectDshProfile({ profile: args.profile }) : undefined
       const name = args.positionals[0]
       if (!name) throw new NativePlaybookError('UNKNOWN_CAPABILITY', 'explain requires a capability name.')
       const capability = await explainNativeCapability(name, profile)
       emit(args.json, capability, formatCapabilities([capability]))
+      return
+    }
+    case 'plan': {
+      const capability = requireCapability(args)
+      const profileName = requireProfile(args, 'plan')
+      const result = await planNativeActivation(capability, { profile: profileName })
+      emit(args.json, result, formatActivation(result))
+      return
+    }
+    case 'activate': {
+      const capability = requireCapability(args)
+      const profileName = requireProfile(args, 'activate')
+      const result = await activateNativeCapability(capability, { profile: profileName })
+      emit(args.json, result, formatActivation(result))
+      return
+    }
+    case 'deactivate': {
+      const capability = requireCapability(args)
+      const profileName = requireProfile(args, 'deactivate')
+      const result = await deactivateNativeCapability(capability, { profile: profileName })
+      emit(args.json, result, formatActivation(result))
+      return
+    }
+    case 'verify': {
+      const capability = requireCapability(args)
+      const profileName = requireProfile(args, 'verify')
+      const result = await verifyNativeCapability(capability, { profile: profileName })
+      emit(
+        args.json,
+        result,
+        `${result.verified ? '✓' : '○'} ${capability}: ${result.lifecycle?.reason ?? 'not found in the pinned catalog'}`,
+      )
       return
     }
     case 'doctor': {
@@ -142,6 +181,32 @@ function formatCapabilities(
     .join('\n')
 }
 
+function formatActivation(value: {
+  capability: string
+  profile: string
+  allowed: boolean
+  reason: string
+  action?: string
+  activationEffect?: string
+}): string {
+  return [
+    `${value.capability} on profile ${value.profile}: ${value.action ?? (value.allowed ? 'available' : 'withheld')}`,
+    value.reason,
+    ...(value.activationEffect ? [`Effect: ${value.activationEffect}`] : []),
+  ].join('\n')
+}
+
+function requireCapability(args: ParsedArguments): string {
+  const capability = args.positionals[0]
+  if (!capability) throw new NativePlaybookError('UNKNOWN_CAPABILITY', `${args.command} requires a capability name.`)
+  return capability
+}
+
+function requireProfile(args: ParsedArguments, command: string): string {
+  if (!args.profile) throw new NativePlaybookError('PROFILE_NOT_FOUND', `${command} requires --profile <name>.`)
+  return args.profile
+}
+
 function statusMark(status: string): string {
   if (status === 'ready') return '✓'
   if (status === 'platform-dependent' || status === 'requires-provider') return '◐'
@@ -162,6 +227,10 @@ Usage:
   dsh-native explain <capability> [--profile <name>] [--json]
   dsh-native doctor [--json]
   dsh-native install --target project|dsh [--json]
+  dsh-native plan <capability> --profile <name> [--json]
+  dsh-native activate <capability> --profile <name> [--json]
+  dsh-native deactivate <capability> --profile <name> [--json]
+  dsh-native verify <capability> --profile <name> [--json]
 `)
 }
 

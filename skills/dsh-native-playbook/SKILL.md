@@ -19,9 +19,10 @@ Use DSH's native capabilities before adding another plugin or building a workaro
 3. Load only the focused reference needed for the task.
 4. Prefer a native capability already available in the current tool set.
 5. Prefer specialized native infrastructure over shell workarounds.
-6. If a capability is shipped but opt-in, disabled, platform-dependent, or provider-dependent, state that accurately.
-7. Only look for an external Skill, plugin, or custom implementation after native options are exhausted.
-8. Do not ask the user to choose among internal DSH packages when the task determines the answer.
+6. If a capability is shipped but opt-in, disabled, platform-dependent, provider-dependent, or unsupported, state that accurately.
+7. Let the installed `native_capability` tool handle reviewed activation automatically when readiness is uncertain. Do not ask the user to run status or verification commands in the normal journey.
+8. Only look for an external Skill, plugin, or custom implementation after native options are exhausted.
+9. Do not ask the user to choose among internal DSH packages when the task determines the answer.
 
 ## Focused references
 
@@ -44,5 +45,6 @@ task
   → still no fit? build the smallest custom implementation
 ```
 
-Do not infer readiness from package existence alone. When exact profile state matters, use
-`dsh-native status --profile <name>` or inspect the current DSH tool set.
+Do not infer readiness from package existence or tool visibility alone. Treat `shipped`,
+`mounted`, `visible`, `providerReady`, and `operational` as separate facts. The advanced CLI
+is for explicit inspection or automation requests, not a manual step in ordinary DSH use.

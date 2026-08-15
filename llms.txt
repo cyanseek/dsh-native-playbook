@@ -1,0 +1,37 @@
+# dsh-native-playbook
+
+> A community DeepSeek Harness plugin, Agent Skill, CLI, and Node API for discovering operational native DSH capabilities and safely activating reviewed native paths.
+
+Repository: https://github.com/cyanseek/dsh-native-playbook
+Upstream: https://github.com/deepseek-ai/deepseek-harness
+License: MIT
+Languages: English, Simplified Chinese
+
+## Primary install
+
+dsh plugin --profile web add github:cyanseek/dsh-native-playbook
+
+The project is a DeepSeek Harness extension, not a standalone agent runtime. The npm package is not published yet.
+
+## Runtime surface
+
+- Tool: native_capability
+- Input: a natural-language task
+- Output: native recommendation, shipped/mounted/visible/providerReady/operational lifecycle, action, verification, and fallback
+- Policy: prefer operational official DSH capabilities before external plugins or infrastructure workarounds
+
+## Safe activation
+
+- Allowlisted recipes only
+- Explicit DSH version compatibility gate
+- Atomic profile update, DSH composition check, automatic rollback
+- No credential, security-policy, network-provider, or arbitrary-command mutations
+- Verified Tier-1 recipe: official session full-text search on DSH 0.1.0-rc.6
+
+## Other surfaces
+
+- Agent Skill: skills/dsh-native-playbook/SKILL.md
+- CLI: dsh-native --help
+- Node API: package root export
+- English documentation: README.md
+- Chinese documentation: README.zh-CN.md

@@ -6,7 +6,11 @@ Session tools provide authorized reads, searches, event inspection, and lineage.
 
 Task: “Find where we decided which database backend to use.”
 
-Use `session_search` when full-text search is enabled. If content search is disabled, exact reads and lineage may still work; report the distinction.
+Use `session_search` when full-text search is enabled. When it is opt-in, allow the installed
+`native_capability` tool to apply the reviewed official activation on a compatible DSH
+version. If the result says `restart`, explain that the configuration is verified but the
+current DSH process must restart before the search tool becomes visible. Do not ask the user
+to inspect profile files or run a separate verification command.
 
 ## Recipe 18 — Explain parent and child history
 

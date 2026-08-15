@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: session-search
+capability: session_search
+provides:
+  - session_search
+  - session_event_search
+description: Enable the official workspace-authorized session full-text search tools on first use.
+upstreamEvidence:
+  - https://github.com/deepseek-ai/deepseek-harness/blob/47f943859bef60e4160492346772ded9b24f765a/packages/bundle/base/cordis.patch.yml
+  - https://github.com/deepseek-ai/deepseek-harness/blob/47f943859bef60e4160492346772ded9b24f765a/packages/session-query/tool-session-query/src/index.ts
+  - https://github.com/deepseek-ai/deepseek-harness/blob/47f943859bef60e4160492346772ded9b24f765a/packages/session-query/session-query-sqlite/README.md
+compatibleDshVersions:
+  - 0.1.0-rc.6
+preconditions:
+  - The active profile is identifiable from the DSH launcher arguments.
+  - The profile user patch is valid YAML and has no conflicting tool-session-query row.
+  - No credentials, provider account, daemon, or network request is required at activation time.
+risk: low
+activationEffect: restart
+patches:
+  - id: session-query-sqlite
+    config:
+      path: ':memory:'
+      openAt: first-search
+  - insert:
+      - id: tool-session-query
+        name: dsh-native-playbook/session-query
+verification:
+  - Compose the effective profile with dsh --profile <name> --dump-config.
+  - Confirm that session-query-sqlite uses openAt first-search.
+  - Confirm that the tool-session-query row resolves through this package wrapper.
+rollback: restore-snapshot

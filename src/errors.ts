@@ -10,6 +10,12 @@ export type ErrorCode =
   | 'SKILL_INSTALL_FAILED'
   | 'INVALID_TASK_MAP'
   | 'INVALID_SKILL'
+  | 'COMPATIBILITY_UNKNOWN'
+  | 'ACTIVATION_NOT_ALLOWED'
+  | 'ACTIVATION_CONFLICT'
+  | 'ACTIVATION_FAILED'
+  | 'ROLLBACK_FAILED'
+  | 'INVALID_RECIPE'
 
 export class NativePlaybookError extends Error {
   readonly code: ErrorCode

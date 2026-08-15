@@ -24,7 +24,7 @@ if (run.status !== 0 || help.status !== 0 || version.status !== 0) {
   if (parsed.mappingId !== 'background-command' || parsed.externalPluginNeeded !== false) {
     throw new Error('CLI JSON smoke returned the wrong native mapping.')
   }
-  if (!help.stdout.startsWith('dsh-native') || version.stdout.trim() !== '0.1.0') {
+  if (!help.stdout.startsWith('dsh-native') || version.stdout.trim() !== '0.2.1') {
     throw new Error('CLI help or version smoke failed.')
   }
   process.stdout.write('CLI JSON smoke passed.\n')

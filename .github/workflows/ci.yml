@@ -35,3 +35,20 @@ jobs:
       - run: pnpm validate:dsh-plugin
       - run: pnpm verify:upstream
       - run: pnpm smoke:json
+      - run: pnpm smoke:consumer
+
+  git-consumer:
+    name: GitHub consumer install / Node 24
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm smoke:consumer
+        env:
+          DSH_NATIVE_GIT_SPEC: github:${{ github.event.pull_request.head.repo.full_name || github.repository }}#${{ github.event.pull_request.head.sha || github.sha }}

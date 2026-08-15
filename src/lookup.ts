@@ -8,6 +8,7 @@ import type {
   ProfileInspection,
   TaskMapEntry,
 } from './types.js'
+import { lifecycleFromDefault } from './profile.js'
 
 export async function listNativeCapabilities(
   profile?: ProfileInspection,
@@ -20,6 +21,7 @@ export async function listNativeCapabilities(
       package: tool.package,
       requires: tool.requires,
       status: profile?.capabilityStatuses[tool.name] ?? tool.defaultStatus,
+      lifecycle: profile?.capabilityLifecycles[tool.name] ?? lifecycleFromDefault(tool),
     }))
 }
 
@@ -52,11 +54,13 @@ export async function lookupNativeCapability(
     }
     const profileStatus = options.profile?.capabilityStatuses[tool.name]
     const status: CapabilityStatus = profileStatus ?? definition.statusOverride ?? tool.defaultStatus
+    const lifecycle = options.profile?.capabilityLifecycles[tool.name] ?? lifecycleFromDefault(tool)
     return {
       capability: tool.name,
       package: tool.package,
       requires: tool.requires,
       status,
+      lifecycle: status === lifecycle.status ? lifecycle : { ...lifecycle, status },
       reason: definition.reason,
       ...(definition.usage ? { usage: definition.usage } : {}),
       ...(definition.fallback ? { fallback: definition.fallback } : {}),

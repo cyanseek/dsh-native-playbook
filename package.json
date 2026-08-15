@@ -1,7 +1,7 @@
 {
   "name": "dsh-native-playbook",
-  "version": "0.1.0",
-  "description": "DSH plugin, Agent Skill, and CLI for choosing native DeepSeek Harness capabilities.",
+  "version": "0.2.1",
+  "description": "Native capability discovery and safe activation for DeepSeek Harness.",
   "type": "module",
   "license": "MIT",
   "author": "cyanseek",
@@ -34,6 +34,7 @@
   "packageManager": "pnpm@10.34.5",
   "files": [
     "dist",
+    "activation-recipes",
     ".codex-plugin",
     "assets",
     "catalog",
@@ -42,6 +43,7 @@
     "cordis.patch.yml",
     "README.md",
     "README.zh-CN.md",
+    "llms.txt",
     "LICENSE"
   ],
   "bin": {
@@ -57,6 +59,10 @@
     "./plugin": {
       "types": "./dist/plugin.d.ts",
       "import": "./dist/plugin.js"
+    },
+    "./session-query": {
+      "types": "./dist/session-query.d.ts",
+      "import": "./dist/session-query.js"
     }
   },
   "scripts": {
@@ -71,10 +77,11 @@
     "sync:upstream": "node scripts/sync-upstream.mjs",
     "verify:upstream": "node scripts/verify-upstream.mjs",
     "smoke:json": "node scripts/smoke-json.mjs",
-    "prepare": "pnpm build",
-    "prepack": "pnpm build && pnpm validate:skill && pnpm validate:plugin && pnpm validate:dsh-plugin && pnpm verify:upstream"
+    "smoke:consumer": "node scripts/smoke-consumer-install.mjs",
+    "prepack": "node scripts/prepack.mjs"
   },
   "dependencies": {
+    "@deepseek-ai/dsh-tool-session-query": "0.1.0-rc.6",
     "yaml": "^2.8.1"
   },
   "devDependencies": {

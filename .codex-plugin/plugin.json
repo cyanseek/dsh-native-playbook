@@ -1,7 +1,7 @@
 {
   "name": "dsh-native-playbook",
-  "version": "0.1.0",
-  "description": "Use native DeepSeek Harness capabilities before building or installing more.",
+  "version": "0.2.1",
+  "description": "Discover and safely activate native DeepSeek Harness capabilities.",
   "author": {
     "name": "cyanseek",
     "url": "https://github.com/cyanseek"
@@ -13,8 +13,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "DSH Native Playbook",
-    "shortDescription": "Match tasks to native DeepSeek Harness capabilities.",
-    "longDescription": "Choose the right built-in DSH tool, service, or opt-in capability before adding an external plugin or custom workaround.",
+    "shortDescription": "Discover and safely activate native DSH capabilities.",
+    "longDescription": "Choose the right built-in DSH tool or service, distinguish visibility from operational readiness, and activate allowlisted native paths safely.",
     "developerName": "cyanseek",
     "category": "Developer Tools",
     "capabilities": [],
