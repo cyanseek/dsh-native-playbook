@@ -72,3 +72,40 @@ test('declares an installable DSH bundle that mounts the plugin export', async (
   assert.equal(manifest.exports['./session-query'].import, './dist/session-query.js')
   assert.deepEqual(patch, [{ insert: [{ id: 'native-playbook', name: 'dsh-native-playbook/plugin' }] }])
 })
+
+test('does not infer provider readiness from provider-backed tool visibility alone', async () => {
+  let definition: Parameters<Parameters<typeof apply>[0]['tools']['register']>[0] | undefined
+  const context: Parameters<typeof apply>[0] = {
+    tools: {
+      register(candidate) {
+        definition = candidate
+      },
+      schemas() {
+        return [
+          { name: 'lsp' },
+          { name: 'terminal_open' },
+          { name: 'terminal_read' },
+          { name: 'native_capability' },
+        ]
+      },
+    },
+    systemPrompt: { section() {} },
+  }
+  apply(context)
+  assert.ok(definition)
+  const value = await definition.execute({ task: 'find all symbol references' }, {})
+  assert.equal(value.capability, 'lsp')
+  assert.equal(value.status, 'requires-provider')
+  assert.equal(value.lifecycle.visible, true)
+  assert.equal(value.lifecycle.providerReady, 'unknown')
+  assert.equal(value.lifecycle.operational, 'unknown')
+  assert.equal(value.action, 'fallback')
+  assert.match(value.fallback, /grep/i)
+
+  const terminal = await definition.execute({ task: 'open persistent terminal' }, {})
+  assert.equal(terminal.capability, 'terminal_open')
+  assert.equal(terminal.status, 'requires-provider')
+  assert.equal(terminal.lifecycle.providerReady, 'unknown')
+  assert.equal(terminal.lifecycle.operational, 'unknown')
+  assert.equal(terminal.action, 'fallback')
+})

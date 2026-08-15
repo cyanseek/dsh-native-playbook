@@ -1,9 +1,11 @@
 # dsh-native-playbook
 
-**Find the DeepSeek Harness capability you already have—and make the safe path usable.**
+**Unlock the DeepSeek Harness you already installed.**
 
 [![CI](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+> Use what DeepSeek Harness already ships before building more.
 
 `dsh-native-playbook` is a community plugin for
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), not a separate agent
@@ -21,7 +23,7 @@ Install the prebuilt GitHub package into your DSH profile:
 dsh plugin --profile web add github:cyanseek/dsh-native-playbook
 ```
 
-Then use DSH normally. Ask for the outcome, not the package:
+**That's it. Use DSH normally.** Ask for the outcome, not the package:
 
 ```text
 Run the test suite in the background and tell me when it finishes.
@@ -29,9 +31,10 @@ Find every reference to this symbol.
 Search previous sessions for the deployment decision.
 ```
 
-There is no repository clone, local build, build approval, API key, daemon, or manual
-verification step in this path. The npm package name is reserved for a later release; until
-then, the GitHub command above is the supported install route.
+There is no repository clone, local build, build approval, account, project API key,
+project config file, daemon, second install, or manual verification step in this path. The
+npm package name is reserved for a later release; until then, the GitHub command above is
+the supported install route.
 
 ## What changes for common tasks
 
@@ -166,6 +169,7 @@ pnpm validate:dsh-plugin
 pnpm verify:upstream
 pnpm smoke:json
 pnpm smoke:consumer
+pnpm metrics
 ```
 
 CI runs the gates on Linux, macOS, and Windows with Node.js 22 and 24, plus a clean GitHub

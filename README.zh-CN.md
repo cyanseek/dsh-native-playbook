@@ -1,9 +1,11 @@
 # dsh-native-playbook
 
-**找到 DeepSeek Harness 已经具备的能力，并让安全路径真正可用。**
+**把你已经安装的 DeepSeek Harness 真正用起来。**
 
 [![CI](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+> 先用好 DeepSeek Harness 已经提供的能力，再考虑重复开发。
 
 `dsh-native-playbook` 是连接
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的社区插件，不是独立的
@@ -20,7 +22,7 @@ Agent runtime。它只增加一个 `native_capability` 工具：把任务路由�
 dsh plugin --profile web add github:cyanseek/dsh-native-playbook
 ```
 
-然后照常使用 DSH，直接描述目标，不需要记 package 名：
+**到这里就结束了。之后正常使用 DSH。** 直接描述目标，不需要记 package 名：
 
 ```text
 在后台运行测试，结束后告诉我结果。
@@ -28,8 +30,9 @@ dsh plugin --profile web add github:cyanseek/dsh-native-playbook
 从历史会话里查找部署方案。
 ```
 
-这条路径不需要 clone 仓库、本地构建、批准构建脚本、API key、守护进程或手工验证。
-npm package 名留给后续正式发布；在此之前，上面的 GitHub 命令是受支持的安装方式。
+这条路径不需要 clone 仓库、本地构建、批准构建脚本、账号、本项目 API key、本项目配置文件、
+守护进程、第二次安装或手工验证。npm package 名留给后续正式发布；在此之前，上面的 GitHub
+命令是受支持的安装方式。
 
 ## 常见任务会发生什么
 
@@ -159,6 +162,7 @@ pnpm validate:dsh-plugin
 pnpm verify:upstream
 pnpm smoke:json
 pnpm smoke:consumer
+pnpm metrics
 ```
 
 CI 会在 Linux、macOS、Windows 的 Node.js 22 和 24 上运行这些门禁，并额外执行干净的

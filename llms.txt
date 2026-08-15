@@ -2,6 +2,8 @@
 
 > A community DeepSeek Harness plugin, Agent Skill, CLI, and Node API for discovering operational native DSH capabilities and safely activating reviewed native paths.
 
+Promise: Unlock the DeepSeek Harness you already installed.
+
 Repository: https://github.com/cyanseek/dsh-native-playbook
 Upstream: https://github.com/deepseek-ai/deepseek-harness
 License: MIT
@@ -33,5 +35,6 @@ The project is a DeepSeek Harness extension, not a standalone agent runtime. The
 - Agent Skill: skills/dsh-native-playbook/SKILL.md
 - CLI: dsh-native --help
 - Node API: package root export
+- Repository impact metrics: pnpm metrics
 - English documentation: README.md
 - Chinese documentation: README.zh-CN.md

@@ -53,6 +53,7 @@ pnpm validate:dsh-plugin
 pnpm verify:upstream
 pnpm smoke:json
 pnpm smoke:consumer
+pnpm metrics
 ```
 
 Run the complete set before release. Use `pnpm sync:upstream -- --source-dir <checkout>`
@@ -70,7 +71,12 @@ when validating against a trusted local upstream checkout.
 - Keep `shipped`, `mounted`, `visible`, `providerReady`, and `operational` distinct.
 - Activation must be allowlisted, version-gated, atomic, verified, and reversible.
 - Activation must never mutate credentials, security policy, or arbitrary provider settings.
+- Never make an ordinary user edit DSH YAML or repeat the installation command.
+- A recipe must replace a complete reviewed config row; never assume DSH deep-merges partial config.
+- Prefer an operational native fallback over a configuration questionnaire.
 - Do not require users to run status or verification commands in the normal DSH journey.
+- Keep the persistent system-prompt contribution tiny.
+- Keep English and Chinese README behavior claims identical.
 - Keep prebuilt `dist/` artifacts committed and never add `prepare`, `install`, or `postinstall`.
 - Installers must refuse to overwrite a destination owned by another Skill.
 - No telemetry, `postinstall`, credential output, or install-time network fetch.

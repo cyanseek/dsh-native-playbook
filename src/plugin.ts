@@ -163,17 +163,7 @@ async function inspectRuntimeProfile(
   const capabilityLifecycles = Object.fromEntries(
     capabilities.map((capability) => {
       const isVisible = visible.has(capability.capability)
-      const lifecycle: CapabilityLifecycle = isVisible
-        ? {
-            ...capability.lifecycle,
-            mounted: true,
-            visible: true,
-            providerReady: true,
-            operational: true,
-            status: 'ready',
-            reason: 'The capability is visible to the calling Agent in the active runtime.',
-          }
-        : { ...capability.lifecycle, visible: false, operational: false }
+      const lifecycle = runtimeVisibilityLifecycle(capability, isVisible)
       return [capability.capability, lifecycle]
     }),
   )
@@ -184,6 +174,36 @@ async function inspectRuntimeProfile(
     capabilityStatuses: Object.fromEntries(
       Object.entries(capabilityLifecycles).map(([capability, lifecycle]) => [capability, lifecycle.status]),
     ),
+  }
+}
+
+function runtimeVisibilityLifecycle(
+  capability: Awaited<ReturnType<typeof listNativeCapabilities>>[number],
+  visible: boolean,
+): CapabilityLifecycle {
+  if (!visible) return { ...capability.lifecycle, visible: false, operational: false }
+  const providerEvidenceRequired = capability.requires.some((service) =>
+    ['lsp', 'terminals', 'sessionQuery', 'web'].includes(service),
+  )
+  if (providerEvidenceRequired) {
+    return {
+      ...capability.lifecycle,
+      mounted: true,
+      visible: true,
+      providerReady: 'unknown',
+      operational: 'unknown',
+      status: 'requires-provider',
+      reason: 'The tool is visible, but provider readiness could not be verified from the active profile.',
+    }
+  }
+  return {
+    ...capability.lifecycle,
+    mounted: true,
+    visible: true,
+    providerReady: true,
+    operational: true,
+    status: 'ready',
+    reason: 'The capability is visible to the calling Agent in the active runtime.',
   }
 }
 

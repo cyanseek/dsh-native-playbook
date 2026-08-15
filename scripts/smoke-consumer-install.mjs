@@ -44,6 +44,15 @@ try {
   if (cli.status !== 0 || cli.stdout.trim() !== '0.2.1') {
     throw new Error(cli.stderr || `installed CLI returned ${JSON.stringify(cli.stdout)}`)
   }
+  const metrics = spawnSync(process.execPath, [join(packageRoot, 'scripts', 'impact-metrics.mjs')], {
+    cwd: packageRoot,
+    encoding: 'utf8',
+  })
+  if (metrics.status !== 0) throw new Error(metrics.stderr || 'installed impact metrics failed')
+  const metricValue = JSON.parse(metrics.stdout)
+  if (metricValue.nativeCoverage?.safeActivationRecipes !== 1) {
+    throw new Error('installed impact metrics returned an invalid recipe count')
+  }
   process.stdout.write(
     `Consumer install passed for ${process.env.DSH_NATIVE_GIT_SPEC ? spec : basename(spec)} without build approval.\n`,
   )

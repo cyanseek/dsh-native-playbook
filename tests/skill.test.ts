@@ -94,7 +94,44 @@ test('English and Chinese READMEs expose the same tested command surface', async
   assert.doesNotMatch(chinese, /approve-builds|allowBuilds|重新安装|重新运行安装/i)
   assert.match(english, /not a separate agent\s+runtime/i)
   assert.match(chinese, /不是独立的\s*Agent runtime/i)
+  assert.match(english, /Unlock the DeepSeek Harness you already installed/)
+  assert.match(english, /Use what DeepSeek Harness already ships before building more/)
+  assert.match(english, /That's it\. Use DSH normally\./)
+  assert.match(chinese, /把你已经安装的 DeepSeek Harness 真正用起来/)
+  assert.match(chinese, /先用好 DeepSeek Harness 已经提供的能力，再考虑重复开发/)
+  assert.match(chinese, /到这里就结束了。之后正常使用 DSH。/)
   await access(join(process.cwd(), 'assets', 'demo.svg'))
+})
+
+test('release notes preserve every v0.1 public surface in the compatibility matrix', async () => {
+  const changelog = await readFile(join(process.cwd(), 'CHANGELOG.md'), 'utf8')
+  for (const surface of ['native_capability', 'dsh-native lookup', 'dsh-native status', 'Agent Skill', 'Node API']) {
+    assert.ok(changelog.includes(surface), `compatibility matrix is missing ${surface}`)
+  }
+})
+
+test('preserves the v0.1 Node API while adding activation APIs', async () => {
+  const api = await import('../src/api.js')
+  const preserved = [
+    'loadTaskMap',
+    'loadUpstreamSnapshot',
+    'lookupNativeCapability',
+    'listNativeCapabilities',
+    'explainNativeCapability',
+    'inspectDshProfile',
+    'parseProfileConfig',
+    'parseRows',
+    'installSkill',
+  ]
+  const added = [
+    'planNativeActivation',
+    'activateNativeCapability',
+    'deactivateNativeCapability',
+    'verifyNativeCapability',
+  ]
+  for (const name of [...preserved, ...added]) {
+    assert.equal(typeof api[name as keyof typeof api], 'function', `missing Node API export ${name}`)
+  }
 })
 
 test('Codex plugin manifest is a thin adapter over the same Skill tree', async () => {
@@ -117,6 +154,7 @@ test('ships prebuilt consumer artifacts with no install-time build hook', async 
   assert.ok(manifest.files.includes('dist'))
   assert.ok(manifest.files.includes('activation-recipes'))
   assert.ok(manifest.files.includes('llms.txt'))
+  assert.ok(manifest.files.includes('scripts/impact-metrics.mjs'))
   for (const artifact of ['api.js', 'plugin.js', 'session-query.js', 'cli.js']) {
     await access(join(process.cwd(), 'dist', artifact))
   }

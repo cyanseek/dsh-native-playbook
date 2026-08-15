@@ -20,7 +20,7 @@ Use DSH's native capabilities before adding another plugin or building a workaro
 4. Prefer a native capability already available in the current tool set.
 5. Prefer specialized native infrastructure over shell workarounds.
 6. If a capability is shipped but opt-in, disabled, platform-dependent, provider-dependent, or unsupported, state that accurately.
-7. Let the installed `native_capability` tool handle reviewed activation automatically when readiness is uncertain. Do not ask the user to run status or verification commands in the normal journey.
+7. Use the installed `native_capability` tool, or this project's deterministic CLI/API when explicitly requested, as the source of DSH state. Let reviewed activation run automatically when readiness is uncertain; never synthesize DSH YAML or ask the user to run status or verification commands in the normal journey.
 8. Only look for an external Skill, plugin, or custom implementation after native options are exhausted.
 9. Do not ask the user to choose among internal DSH packages when the task determines the answer.
 

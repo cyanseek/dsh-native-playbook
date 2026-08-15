@@ -35,6 +35,7 @@ jobs:
       - run: pnpm validate:dsh-plugin
       - run: pnpm verify:upstream
       - run: pnpm smoke:json
+      - run: pnpm metrics
       - run: pnpm smoke:consumer
 
   git-consumer:

@@ -26,6 +26,16 @@ All notable changes to this project are documented here. The format follows
 
 - Consumer lifecycle build scripts, including `prepare`.
 
+### Compatibility
+
+| Surface | v0.1 behavior | v0.2.1 behavior | Compatibility |
+| --- | --- | --- | --- |
+| `native_capability` | Task lookup | Task lookup plus lifecycle and reviewed activation | Compatible; existing fields remain |
+| `dsh-native lookup` | Native lookup | Native lookup with richer lifecycle data | Compatible command and flags |
+| `dsh-native status` | Profile status | Provider-aware lifecycle status | Compatible command and JSON extension |
+| Agent Skill | Native-first guidance | Native-first guidance plus safe activation policy | Same name and installation path |
+| Node API | Lookup, catalog, profile, and install exports | Existing exports plus activation APIs | Existing exports preserved |
+
 ## [0.1.0] - 2026-08-14
 
 ### Added

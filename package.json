@@ -1,7 +1,7 @@
 {
   "name": "dsh-native-playbook",
   "version": "0.2.1",
-  "description": "Native capability discovery and safe activation for DeepSeek Harness.",
+  "description": "Task-aware native capability manager for DeepSeek Harness — use, prepare, and verify built-in DSH tools before adding another plugin.",
   "type": "module",
   "license": "MIT",
   "author": "cyanseek",
@@ -26,7 +26,11 @@
     "playbook",
     "cli",
     "subagents",
-    "workflow"
+    "workflow",
+    "capability-manager",
+    "lsp",
+    "session",
+    "automation"
   ],
   "engines": {
     "node": ">=22"
@@ -40,6 +44,7 @@
     "catalog",
     "generated",
     "skills",
+    "scripts/impact-metrics.mjs",
     "cordis.patch.yml",
     "README.md",
     "README.zh-CN.md",
@@ -78,6 +83,7 @@
     "verify:upstream": "node scripts/verify-upstream.mjs",
     "smoke:json": "node scripts/smoke-json.mjs",
     "smoke:consumer": "node scripts/smoke-consumer-install.mjs",
+    "metrics": "node scripts/impact-metrics.mjs",
     "prepack": "node scripts/prepack.mjs"
   },
   "dependencies": {
