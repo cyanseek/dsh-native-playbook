@@ -30,7 +30,7 @@ Use this index to route by the user's intended outcome. Availability is profile-
 | Track implementation work | `todo_write` | Not for Plan Mode drafting |
 | Persist a multi-turn objective | goal tools | Complete only from evidence |
 | Search current internet information | `web_search` | Provider credentials may still matter |
-| Retrieve an exact URL | `web_fetch` | Shipped base disables fetch by default |
+| Retrieve an exact URL | `web_fetch` | Current base enables HTTP fetch; verify effective profile and provider |
 | Ask for a user-owned choice | `ask_user_question` | First inspect discoverable facts |
 | Submit a plan for approval | `exit_plan_mode` | Only while Plan Mode is active |
 | Search durable history | session query tools | Content search can be opt-in |

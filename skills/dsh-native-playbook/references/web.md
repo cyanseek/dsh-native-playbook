@@ -12,4 +12,4 @@ Use `web_search`, prefer the authoritative project source, and cite it. A mounte
 
 Task: “Fetch this exact documentation URL.”
 
-Use `web_fetch` only when the profile has explicitly enabled it with a provider. The shipped base keeps fetch disabled; do not describe it as ready merely because the tool package exists.
+The pinned September 2026 base enables `web_fetch` with the anonymous HTTP provider. Earlier bases disabled it, and product profiles can still override it. Inspect the effective profile: fetch must be enabled, the web router must select `http`, and the HTTP fetch provider must be mounted and enabled. A different provider requires separate readiness evidence. Catalog defaults alone do not establish operational availability in the current session.

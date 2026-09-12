@@ -141,7 +141,7 @@ The public API also exports `listNativeCapabilities`, `explainNativeCapability`,
 ## Compatibility and privacy
 
 - Requires Node.js 22 or 24 and DeepSeek Harness.
-- Capability facts are pinned to an official DSH source revision.
+- Capability facts cover 59 official tools, pinned to DSH revision `c291e7961a51` (September 10, 2026). The pinned default profile enables HTTP web fetching; live readiness still checks the tool, router, and provider together.
 - Static lookup works without DSH; live readiness needs an existing DSH profile.
 - No telemetry is collected.
 - No API accesses credential stores or private session contents.

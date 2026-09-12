@@ -241,8 +241,7 @@ entries:
     intents: [fetch a web page, download url content, retrieve webpage, 抓取网页, 获取 URL 内容]
     recommendations:
       - capability: web_fetch
-        reason: Web fetch exists natively but the shipped base disables it until a safe provider is configured.
-        statusOverride: disabled
+        reason: The current shipped base enables anonymous HTTP fetch; inspect the effective profile and its selected fetch provider before use.
     externalPluginNeeded: false
 
   - id: ask-user-choice

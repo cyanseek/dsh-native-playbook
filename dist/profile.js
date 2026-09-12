@@ -93,9 +93,14 @@ export function resolveCapabilityLifecycle(tool, rows, visibleCapabilities) {
             : lifecycle('opt-in', true, visible, true, false, 'The tools plugin is mounted without Code Mode enabled.');
     }
     if (tool.name === 'web_fetch') {
-        return matching.some((row) => /^\s+fetch:\s*true\s*$/m.test(row.raw))
-            ? readyLifecycle(visible)
-            : lifecycle('disabled', true, visible, false, false, 'Web fetch is disabled by the effective tool configuration.');
+        if (!matching.some((row) => row.disabled !== true && /^\s+fetch:\s*true\s*$/m.test(row.raw))) {
+            return lifecycle('disabled', true, visible, false, false, 'Web fetch is disabled by the effective tool configuration.');
+        }
+        const httpSelected = rows.some((row) => row.package === '@deepseek-ai/dsh-web'
+            && row.disabled === false && /^\s+fetchProvider:\s*['"]?http['"]?\s*$/m.test(row.raw));
+        const httpMounted = rows.some((row) => row.package === '@deepseek-ai/dsh-web-fetch-http'
+            && row.disabled === false);
+        return providerLifecycle(visible, httpSelected && httpMounted, 'Web fetch requires an enabled web router selecting the mounted anonymous HTTP provider; other providers need separate readiness evidence.');
     }
     if (tool.name === 'lsp') {
         return providerLifecycle(visible, rows.some((row) => /\/dsh-lsp-(?!tool)/.test(row.package) && row.disabled !== true), 'No operational LSP provider is mounted; use grep or glob as the native fallback.');

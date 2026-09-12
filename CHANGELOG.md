@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Refresh the generated catalog to 59 native tools at official upstream commit `c291e7961a515f6d7af9304e7fd1d257929aef26`.
+- Follow the current base's enabled web-fetch default while requiring the selected HTTP provider in effective-profile checks.
+- Preserve existing version gates for activation recipes; a newer catalog does not expand activation compatibility.
+
 ## [0.2.1] - 2026-08-16
 
 ### Added

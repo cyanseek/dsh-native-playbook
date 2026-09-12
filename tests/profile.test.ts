@@ -78,3 +78,28 @@ test('rejects unsafe profile names before executing DSH', async () => {
       error instanceof NativePlaybookError && error.code === 'PROFILE_NOT_FOUND',
   )
 })
+
+test('requires the selected anonymous HTTP provider before declaring web fetch ready', async () => {
+  const snapshot = await loadUpstreamSnapshot()
+  const enabled = profile.replace('fetch: false', 'fetch: true')
+  const router = `
+    - id: web
+      name: '@deepseek-ai/dsh-web'
+      config:
+        fetchProvider: http
+`
+  const provider = `
+    - id: web-fetch-http
+      name: '@deepseek-ai/dsh-web-fetch-http'
+`
+  for (const source of [enabled, enabled + router, enabled + provider,
+    enabled + router + provider + '      disabled: true\n',
+    enabled + router.replace('fetchProvider: http', 'fetchProvider: custom') + provider]) {
+    const result = parseProfileConfig('fixture', source, snapshot, ['web_fetch'])
+    assert.equal(result.capabilityStatuses.web_fetch, 'requires-provider')
+    assert.equal(result.capabilityLifecycles.web_fetch?.operational, false)
+  }
+  const result = parseProfileConfig('fixture', enabled + router + provider, snapshot, ['web_fetch'])
+  assert.equal(result.capabilityStatuses.web_fetch, 'ready')
+  assert.equal(result.capabilityLifecycles.web_fetch?.operational, true)
+})

@@ -45,7 +45,10 @@ test('lists the generated native tool catalog', async () => {
     capabilities.find((item) => item.capability === 'ask_user_question')?.requires,
     ['tools', 'userQuestions'],
   )
-  assert.equal(capabilities.find((item) => item.capability === 'web_fetch')?.status, 'disabled')
+  assert.equal(capabilities.find((item) => item.capability === 'web_fetch')?.status, 'ready')
+  const fetchResult = await lookupNativeCapability('fetch a web page')
+  assert.equal(fetchResult.recommendations[0]?.status, 'ready')
+  assert.equal(fetchResult.recommendations[0]?.lifecycle.operational, 'unknown')
 })
 
 test('fails with a stable code when no task matches', async () => {

@@ -135,7 +135,7 @@ const plan = await planNativeActivation('session_search', { profile: 'web' })
 ## 兼容性与隐私
 
 - 需要 Node.js 22 或 24，以及 DeepSeek Harness。
-- 能力事实固定到 DSH 官方源码的一个明确 revision。
+- 能力事实覆盖 59 项官方工具，固定到 DSH revision `c291e7961a51`（2026 年 9 月 10 日）。该默认 profile 已启用 HTTP 网页抓取；实时就绪判断仍联合检查工具、路由和 provider。
 - 静态查询不要求 DSH；实时就绪判断需要已存在的 DSH profile。
 - 不收集遥测。
 - API 不访问凭据存储或私有会话内容。
