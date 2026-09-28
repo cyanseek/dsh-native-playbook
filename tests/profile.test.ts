@@ -103,3 +103,32 @@ test('requires the selected anonymous HTTP provider before declaring web fetch r
   assert.equal(result.capabilityStatuses.web_fetch, 'ready')
   assert.equal(result.capabilityLifecycles.web_fetch?.operational, true)
 })
+
+test('distinguishes plugin manager service from its disabled model-facing tool', async () => {
+  const snapshot = await loadUpstreamSnapshot()
+  const source = `
+- id: plugin-manager
+  name: '@deepseek-ai/dsh-plugin-manager'
+- id: tool-plugin-manager
+  name: '@deepseek-ai/dsh-plugin-manager/tools'
+  disabled: true
+`
+  assert.equal(parseProfileConfig('fixture', source, snapshot).capabilityStatuses.plugin_manager, 'disabled')
+  assert.equal(parseProfileConfig('fixture', source.replace('disabled: true', 'disabled: false'), snapshot).capabilityStatuses.plugin_manager, 'ready')
+})
+
+test('recognizes PTC mode and keeps unevaluated conditions unverified', async () => {
+  const snapshot = await loadUpstreamSnapshot()
+  const source = `
+- id: tools
+  name: '@deepseek-ai/dsh-tools'
+  config:
+    mode: ptc
+- id: tool-plugin-manager
+  name: '@deepseek-ai/dsh-plugin-manager/tools'
+  disabled: !!js '!ctx.get("profileContext")'
+`
+  const inspected = parseProfileConfig('fixture', source, snapshot)
+  assert.equal(inspected.capabilityStatuses.run_code, 'ready')
+  assert.notEqual(inspected.capabilityLifecycles.plugin_manager?.operational, true)
+})

@@ -139,7 +139,7 @@ test('Codex plugin manifest is a thin adapter over the same Skill tree', async (
     await readFile(join(process.cwd(), '.codex-plugin', 'plugin.json'), 'utf8'),
   )
   assert.equal(manifest.name, 'dsh-native-playbook')
-  assert.equal(manifest.version, '0.2.1')
+  assert.equal(manifest.version, '0.3.0')
   assert.equal(manifest.skills, './skills/')
   assert.equal(manifest.mcpServers, undefined)
   assert.equal(manifest.apps, undefined)
@@ -147,7 +147,7 @@ test('Codex plugin manifest is a thin adapter over the same Skill tree', async (
 
 test('ships prebuilt consumer artifacts with no install-time build hook', async () => {
   const manifest = JSON.parse(await readFile(join(process.cwd(), 'package.json'), 'utf8'))
-  assert.equal(manifest.version, '0.2.1')
+  assert.equal(manifest.version, '0.3.0')
   assert.equal(manifest.scripts.prepare, undefined)
   assert.equal(manifest.scripts.install, undefined)
   assert.equal(manifest.scripts.postinstall, undefined)

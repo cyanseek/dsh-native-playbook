@@ -1,6 +1,6 @@
 {
   "name": "dsh-native-playbook",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Discover and safely activate native DeepSeek Harness capabilities.",
   "author": {
     "name": "cyanseek",

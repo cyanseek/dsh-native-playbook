@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### 0.3.0 candidate — 2026-09-28
+
+- Target DSH 0.1.7-rc.2; prior compatibility evidence remains historical.
+- 66 native tools, 47 task mappings, conditional profile readiness, PTC mode, and verified session-query activation.
+
+
 ### Changed
 
 - Refresh the generated catalog to 59 native tools at official upstream commit `c291e7961a515f6d7af9304e7fd1d257929aef26`.

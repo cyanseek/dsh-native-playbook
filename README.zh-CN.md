@@ -1,5 +1,7 @@
 # dsh-native-playbook
 
+> 开发版本 `0.3.0`（GitHub 源码版，未发布 npm 包）：2026-09-28 在 Windows Node.js 24.11.1、DSH `0.1.7-rc.2` 上完成本地验证。66 个原生工具、47 个任务映射，更新条件配置判定、PTC 模式和会话查询激活。 本轮未重跑真实模型端到端及原生 macOS 验证。
+
 **把你已经安装的 DeepSeek Harness 真正用起来。**
 
 [![CI](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml)
@@ -73,7 +75,7 @@ dsh plugin --profile web add github:cyanseek/dsh-native-playbook
 - 停用时恢复精确保存的内容；如果用户后来修改过文件，则拒绝覆盖新修改。
 
 第一条 Tier-1 配方会启用 DSH 官方、受 workspace 授权的会话全文搜索，并使用延迟打开的
-本地索引。当前已验证的激活目标是 DSH `0.1.0-rc.6`。其他版本仍可使用静态查询，但不会
+本地索引。当前已验证的激活目标是 DSH `0.1.7-rc.2`。其他版本仍可使用静态查询，但不会
 执行未经验证的配置修改。
 
 ## Agent Skill
@@ -135,7 +137,7 @@ const plan = await planNativeActivation('session_search', { profile: 'web' })
 ## 兼容性与隐私
 
 - 需要 Node.js 22 或 24，以及 DeepSeek Harness。
-- 能力事实覆盖 59 项官方工具，固定到 DSH revision `c291e7961a51`（2026 年 9 月 10 日）。该默认 profile 已启用 HTTP 网页抓取；实时就绪判断仍联合检查工具、路由和 provider。
+- 能力事实覆盖 59 项官方工具，固定到 DSH revision `477b4f420553`（2026 年 9 月 10 日）。该默认 profile 已启用 HTTP 网页抓取；实时就绪判断仍联合检查工具、路由和 provider。
 - 静态查询不要求 DSH；实时就绪判断需要已存在的 DSH profile。
 - 不收集遥测。
 - API 不访问凭据存储或私有会话内容。

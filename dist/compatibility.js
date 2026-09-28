@@ -1,5 +1,5 @@
 import { execDsh } from './dsh-process.js';
-export const TESTED_DSH_VERSIONS = ['0.1.0-rc.5', '0.1.0-rc.6'];
+export const TESTED_DSH_VERSIONS = ['0.1.7-rc.2'];
 export async function inspectDshCompatibility(options = {}) {
     if (options.version !== undefined)
         return evaluateDshCompatibility(options.version);

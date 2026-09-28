@@ -46,7 +46,7 @@ try {
     }
   }
 
-  if (!help.stdout.startsWith('dsh-native') || version.stdout.trim() !== '0.2.1') {
+  if (!help.stdout.startsWith('dsh-native') || version.stdout.trim() !== '0.3.0') {
     throw new Error('CLI help or version smoke failed.')
   }
   process.stdout.write('CLI JSON smoke passed.\n')

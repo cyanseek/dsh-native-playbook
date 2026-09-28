@@ -53,7 +53,7 @@ test('plans, activates, verifies, and exactly restores the reviewed recipe', asy
   const options = {
     profile: 'web',
     dshHome: value.dshHome,
-    version: '0.1.0-rc.6',
+    version: '0.1.7-rc.2',
     runDsh: value.runDsh,
   }
   const plan = await planNativeActivation('session_search', options)
@@ -96,7 +96,7 @@ test('rolls back byte-for-byte when post-write verification fails', async () => 
     activateNativeCapability('session_search', {
       profile: 'web',
       dshHome: value.dshHome,
-      version: '0.1.0-rc.6',
+      version: '0.1.7-rc.2',
       runDsh: async () => baseline,
     }),
     (error: unknown) => error instanceof NativePlaybookError && error.code === 'ACTIVATION_FAILED',
@@ -115,7 +115,7 @@ test('preserves a user-owned provider override instead of guessing', async () =>
     activateNativeCapability('session_search', {
       profile: 'web',
       dshHome: value.dshHome,
-      version: '0.1.0-rc.6',
+      version: '0.1.7-rc.2',
       runDsh: async () => baseline,
     }),
     (error: unknown) => error instanceof NativePlaybookError && error.code === 'ACTIVATION_CONFLICT',
@@ -128,7 +128,7 @@ test('refuses to deactivate over edits made after activation', async () => {
   const options = {
     profile: 'web',
     dshHome: value.dshHome,
-    version: '0.1.0-rc.6',
+    version: '0.1.7-rc.2',
     runDsh: value.runDsh,
   }
   await activateNativeCapability('session_search', options)

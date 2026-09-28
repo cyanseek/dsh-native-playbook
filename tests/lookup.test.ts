@@ -58,3 +58,19 @@ test('fails with a stable code when no task matches', async () => {
       error instanceof NativePlaybookError && error.code === 'NO_NATIVE_MATCH',
   )
 })
+
+test('maps new release capabilities without treating optional browser services as installed', async () => {
+  for (const [task, capability] of [
+    ['manage plugins', 'plugin_manager'],
+    ['list mcp resources', 'list_mcp_resources'],
+    ['read mcp resource', 'read_mcp_resource'],
+    ['update a schedule', 'schedule_update'],
+    ['load workspace dependencies', 'load_workspace_dependencies'],
+    ['interact with a web page', 'stagehand_observe'],
+  ]) {
+    const result = await lookupNativeCapability(task!)
+    assert.equal(result.recommendations[0]?.capability, capability)
+  }
+  const browser = await lookupNativeCapability('interact with a web page')
+  assert.equal(browser.recommendations[0]?.lifecycle.operational, false)
+})

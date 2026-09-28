@@ -28,7 +28,7 @@ The project is a DeepSeek Harness extension, not a standalone agent runtime. The
 - Explicit DSH version compatibility gate
 - Atomic profile update, DSH composition check, automatic rollback
 - No credential, security-policy, network-provider, or arbitrary-command mutations
-- Verified Tier-1 recipe: official session full-text search on DSH 0.1.0-rc.6
+- Verified Tier-1 recipe: official session full-text search on DSH 0.1.7-rc.2
 
 ## Other surfaces
 

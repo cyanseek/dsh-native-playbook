@@ -1,7 +1,7 @@
 import type { DshCompatibility } from './types.js'
 import { execDsh } from './dsh-process.js'
 
-export const TESTED_DSH_VERSIONS = ['0.1.0-rc.5', '0.1.0-rc.6'] as const
+export const TESTED_DSH_VERSIONS = ['0.1.7-rc.2'] as const
 
 export interface InspectDshCompatibilityOptions {
   dshCommand?: string

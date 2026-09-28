@@ -328,3 +328,75 @@ entries:
       - capability: job_kill
         reason: Native jobs already own cancellation.
     externalPluginNeeded: false
+
+  - id: manage-plugins
+    category: configuration
+    intents: [manage plugins, enable a plugin, install a plugin, 管理插件, 启用插件, 安装插件]
+    recommendations:
+      - capability: plugin_manager
+        reason: Use the official plugin manager for the current profile; changes require the runtime's approval policy.
+    externalPluginNeeded: false
+
+  - id: discover-mcp-resources
+    category: resources
+    intents: [list mcp resources, discover mcp resources, 查看 MCP 资源]
+    recommendations:
+      - capability: list_mcp_resources
+        reason: Discover resources exposed by connected MCP servers.
+      - capability: list_mcp_resource_templates
+        reason: Discover parameterized resource templates from connected servers.
+    externalPluginNeeded: false
+
+  - id: read-mcp-resource
+    category: resources
+    intents: [read an mcp resource, read mcp resource, 读取 MCP 资源]
+    recommendations:
+      - capability: read_mcp_resource
+        reason: Read a resource identified by the connected server's resource listing.
+    externalPluginNeeded: false
+
+  - id: browser-navigation
+    category: browser
+    intents: [open a browser page, navigate browser, 浏览器打开网页]
+    recommendations:
+      - capability: stagehand_tabs
+        reason: Inspect the available tabs before choosing a target.
+      - capability: stagehand_navigate
+        reason: Navigate through the opt-in native Stagehand browser integration.
+    externalPluginNeeded: false
+
+  - id: browser-interaction
+    category: browser
+    intents: [interact with a web page, click a browser button, 点击网页按钮, 操作浏览器]
+    recommendations:
+      - capability: stagehand_observe
+        reason: Observe available browser actions before interacting.
+      - capability: stagehand_act
+        reason: Execute a browser action after the browser integration is configured.
+    externalPluginNeeded: false
+
+  - id: browser-extraction
+    category: browser
+    intents: [extract browser content, browser screenshot, 提取网页内容, 浏览器截图]
+    recommendations:
+      - capability: stagehand_extract
+        reason: Extract structured content from the configured browser.
+      - capability: stagehand_screenshot
+        reason: Capture the current browser view when visual inspection is needed.
+    externalPluginNeeded: false
+
+  - id: update-schedule
+    category: orchestration
+    intents: [update a schedule, change a reminder, 修改定时任务, 更新提醒]
+    recommendations:
+      - capability: schedule_update
+        reason: Update an existing scheduled task through its owning service.
+    externalPluginNeeded: false
+
+  - id: workspace-dependencies
+    category: resources
+    intents: [load workspace dependencies, locate document runtimes, 加载工作区依赖]
+    recommendations:
+      - capability: load_workspace_dependencies
+        reason: Discover the configured workspace runtimes before generating office documents.
+    externalPluginNeeded: false

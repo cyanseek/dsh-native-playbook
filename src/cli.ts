@@ -29,7 +29,7 @@ async function main(argv: string[]): Promise<void> {
     return
   }
   if (args.command === '--version' || args.command === '-V') {
-    process.stdout.write('0.2.1\n')
+    process.stdout.write('0.3.0\n')
     return
   }
 

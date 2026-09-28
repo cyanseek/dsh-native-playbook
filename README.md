@@ -1,5 +1,7 @@
 # dsh-native-playbook
 
+> Development version `0.3.0` (GitHub source; no npm release): tested locally on Windows Node.js 24.11.1 with DSH `0.1.7-rc.2` (2026-09-28). 66 native tools, 47 task mappings, conditional profile readiness, PTC mode, and verified session-query activation. Model-backed end-to-end and native macOS runs have not been repeated.
+
 **Unlock the DeepSeek Harness you already installed.**
 
 [![CI](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/cyanseek/dsh-native-playbook/actions/workflows/ci.yml)
@@ -78,7 +80,7 @@ Activation is deliberately narrow:
 - Deactivation restores the exact saved content and refuses to overwrite later user edits.
 
 The first Tier-1 recipe enables DSH's official, workspace-authorized session full-text
-search with a lazy local index. DSH `0.1.0-rc.6` is the currently verified activation
+search with a lazy local index. DSH `0.1.7-rc.2` is the currently verified activation
 target. Static lookup remains useful on other versions, while mutation is withheld.
 
 ## Agent Skill
@@ -141,7 +143,7 @@ The public API also exports `listNativeCapabilities`, `explainNativeCapability`,
 ## Compatibility and privacy
 
 - Requires Node.js 22 or 24 and DeepSeek Harness.
-- Capability facts cover 59 official tools, pinned to DSH revision `c291e7961a51` (September 10, 2026). The pinned default profile enables HTTP web fetching; live readiness still checks the tool, router, and provider together.
+- Capability facts cover 66 official tools, pinned to DSH revision `477b4f420553` (September 24, 2026). The pinned default profile enables HTTP web fetching; live readiness still checks the tool, router, and provider together.
 - Static lookup works without DSH; live readiness needs an existing DSH profile.
 - No telemetry is collected.
 - No API accesses credential stores or private session contents.

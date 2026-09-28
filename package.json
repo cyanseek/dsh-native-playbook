@@ -1,6 +1,6 @@
 {
   "name": "dsh-native-playbook",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Task-aware native capability manager for DeepSeek Harness — use, prepare, and verify built-in DSH tools before adding another plugin.",
   "type": "module",
   "license": "MIT",
@@ -87,10 +87,14 @@
     "prepack": "node scripts/prepack.mjs"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-tool-session-query": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-tool-session-query": "0.1.7-rc.2",
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@deepseek-ai/cordis": "~4.0.4",
+    "@deepseek-ai/dsh-llm": "0.1.7-rc.2",
+    "@deepseek-ai/dsh-system-prompt": "0.1.7-rc.2",
+    "@deepseek-ai/dsh-tools": "0.1.7-rc.2",
     "@types/node": "^24.3.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
@@ -103,5 +107,10 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.4",
+    "@deepseek-ai/dsh-system-prompt": "0.1.7-rc.2",
+    "@deepseek-ai/dsh-tools": "0.1.7-rc.2"
   }
 }

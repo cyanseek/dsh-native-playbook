@@ -22,7 +22,11 @@ async function main() {
     throw codedError('UPSTREAM_PARSE_FAILED', '--source-dir requires a path.')
   }
   const check = process.argv.includes('--check')
-  const upstream = sourceDir ? await readLocalSource(resolve(sourceDir)) : await fetchRemoteSource()
+  const ref = option('--ref') ?? 'master'
+  if (process.argv.includes('--ref') && (!option('--ref') || ref.startsWith('--'))) {
+    throw codedError('UPSTREAM_PARSE_FAILED', '--ref requires a tag, branch, or commit.')
+  }
+  const upstream = sourceDir ? await readLocalSource(resolve(sourceDir)) : await fetchRemoteSource(ref)
   const snapshot = buildSnapshot(upstream)
   const json = `${JSON.stringify(snapshot, null, 2)}\n`
   const commitText = `${snapshot.upstreamCommit}\n`
@@ -51,9 +55,9 @@ async function main() {
   )
 }
 
-async function fetchRemoteSource() {
+async function fetchRemoteSource(ref) {
   try {
-    const commitResponse = await fetch(`https://api.github.com/repos/${repository}/commits/master`, {
+    const commitResponse = await fetch(`https://api.github.com/repos/${repository}/commits/${encodeURIComponent(ref)}`, {
       headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'dsh-native-playbook' },
     })
     if (!commitResponse.ok) {
@@ -243,7 +247,9 @@ function packageRank(packageName, rows) {
 
 function defaultStatus(tool, rows, baseConfig) {
   const matching = rows.filter(
-    (row) => row.package === tool.package || row.package.startsWith(`${tool.package}/`),
+    (row) => tool.name === 'plugin_manager'
+      ? row.package === '@deepseek-ai/dsh-plugin-manager/tools'
+      : row.package === tool.package || row.package.startsWith(`${tool.package}/`),
   )
   if (matching.length === 0) return 'opt-in'
   if (matching.every((row) => row.disabled === true)) return 'disabled'
@@ -269,7 +275,7 @@ function parseRows(source) {
         disabled:
           disabledValue === 'true'
             ? true
-            : disabledValue?.includes('process.platform')
+            : disabledValue?.includes('!!js')
               ? 'platform-dependent'
               : false,
         raw,

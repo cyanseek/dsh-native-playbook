@@ -41,7 +41,7 @@ try {
     cwd: temporary,
     encoding: 'utf8',
   })
-  if (cli.status !== 0 || cli.stdout.trim() !== '0.2.1') {
+  if (cli.status !== 0 || cli.stdout.trim() !== '0.3.0') {
     throw new Error(cli.stderr || `installed CLI returned ${JSON.stringify(cli.stdout)}`)
   }
   const metrics = spawnSync(process.execPath, [join(packageRoot, 'scripts', 'impact-metrics.mjs')], {

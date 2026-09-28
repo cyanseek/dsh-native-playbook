@@ -89,7 +89,7 @@ export function parseRows(source: string): ProfileRow[] {
       let disabled: boolean | 'platform-dependent' = false
       const disabledMatch = raw.match(/^\s+disabled:\s*(.+?)\s*$/m)
       if (disabledMatch?.[1] === 'true') disabled = true
-      else if (disabledMatch?.[1]?.includes('process.platform')) disabled = 'platform-dependent'
+      else if (disabledMatch?.[1]?.includes('!!js')) disabled = 'platform-dependent'
       rows.push({ id: current.id, package: packageMatch[1], disabled, raw })
     }
     current = undefined
@@ -114,7 +114,9 @@ export function resolveCapabilityLifecycle(
   visibleCapabilities?: ReadonlySet<string>,
 ): CapabilityLifecycle {
   const matching = rows.filter(
-    (row) => row.package === tool.package
+    (row) => tool.name === 'plugin_manager'
+      ? row.package === '@deepseek-ai/dsh-plugin-manager/tools'
+      : row.package === tool.package
       || row.package.startsWith(`${tool.package}/`)
       || (tool.package === '@deepseek-ai/dsh-tool-session-query'
         && row.package === 'dsh-native-playbook/session-query'),
@@ -133,14 +135,14 @@ export function resolveCapabilityLifecycle(
       visible,
       'unknown',
       visible === true ? true : 'unknown',
-      'Mounted conditionally; operational readiness depends on the current platform.',
+      'Mounted conditionally; operational readiness needs the evaluated runtime configuration.',
     )
   }
 
   if (tool.name === 'run_code') {
-    return matching.some((row) => /^\s+mode:\s*(?:code|both)\s*$/m.test(row.raw))
+    return matching.some((row) => /^\s+mode:\s*(?:ptc|both)\s*$/m.test(row.raw))
       ? readyLifecycle(visible)
-      : lifecycle('opt-in', true, visible, true, false, 'The tools plugin is mounted without Code Mode enabled.')
+      : lifecycle('opt-in', true, visible, true, false, 'The tools plugin is mounted without PTC mode enabled.')
   }
   if (tool.name === 'web_fetch') {
     if (!matching.some((row) => row.disabled !== true && /^\s+fetch:\s*true\s*$/m.test(row.raw))) {
@@ -160,6 +162,10 @@ export function resolveCapabilityLifecycle(
       'No operational LSP provider is mounted; use grep or glob as the native fallback.',
     )
   }
+  if (tool.name.startsWith('stagehand_')) {
+    return lifecycle('requires-provider', true, visible, 'unknown', 'unknown',
+      'The browser plugin is mounted; a connected browser and its provider must be verified before use.')
+  }
   if (tool.name.startsWith('terminal_')) {
     return providerLifecycle(
       visible,
@@ -176,7 +182,7 @@ export function resolveCapabilityLifecycle(
   }
   if (tool.package === '@deepseek-ai/dsh-tool-session-query') {
     const isSearch = tool.name === 'session_search' || tool.name === 'session_event_search'
-    const queryProvider = rows.find((row) => row.package === '@deepseek-ai/dsh-session-query-sqlite')
+    const queryProvider = rows.find((row) => row.package === '@deepseek-ai/dsh-session-query-sqlite' && row.disabled === false)
     const providerReady = queryProvider
       ? !isSearch || /^\s+openAt:\s*(?:startup|first-search)\s*$/m.test(queryProvider.raw)
       : false

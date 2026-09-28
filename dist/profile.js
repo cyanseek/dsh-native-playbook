@@ -53,7 +53,7 @@ export function parseRows(source) {
             const disabledMatch = raw.match(/^\s+disabled:\s*(.+?)\s*$/m);
             if (disabledMatch?.[1] === 'true')
                 disabled = true;
-            else if (disabledMatch?.[1]?.includes('process.platform'))
+            else if (disabledMatch?.[1]?.includes('!!js'))
                 disabled = 'platform-dependent';
             rows.push({ id: current.id, package: packageMatch[1], disabled, raw });
         }
@@ -73,10 +73,12 @@ export function parseRows(source) {
     return rows;
 }
 export function resolveCapabilityLifecycle(tool, rows, visibleCapabilities) {
-    const matching = rows.filter((row) => row.package === tool.package
-        || row.package.startsWith(`${tool.package}/`)
-        || (tool.package === '@deepseek-ai/dsh-tool-session-query'
-            && row.package === 'dsh-native-playbook/session-query'));
+    const matching = rows.filter((row) => tool.name === 'plugin_manager'
+        ? row.package === '@deepseek-ai/dsh-plugin-manager/tools'
+        : row.package === tool.package
+            || row.package.startsWith(`${tool.package}/`)
+            || (tool.package === '@deepseek-ai/dsh-tool-session-query'
+                && row.package === 'dsh-native-playbook/session-query'));
     const visible = visibleCapabilities ? visibleCapabilities.has(tool.name) : 'unknown';
     if (matching.length === 0) {
         return lifecycle('opt-in', false, visible, 'unknown', false, 'Shipped by DSH but not mounted in this profile.');
@@ -85,12 +87,12 @@ export function resolveCapabilityLifecycle(tool, rows, visibleCapabilities) {
         return lifecycle('disabled', true, visible, false, false, 'Mounted but disabled by the effective profile.');
     }
     if (matching.some((row) => row.disabled === 'platform-dependent')) {
-        return lifecycle('platform-dependent', true, visible, 'unknown', visible === true ? true : 'unknown', 'Mounted conditionally; operational readiness depends on the current platform.');
+        return lifecycle('platform-dependent', true, visible, 'unknown', visible === true ? true : 'unknown', 'Mounted conditionally; operational readiness needs the evaluated runtime configuration.');
     }
     if (tool.name === 'run_code') {
-        return matching.some((row) => /^\s+mode:\s*(?:code|both)\s*$/m.test(row.raw))
+        return matching.some((row) => /^\s+mode:\s*(?:ptc|both)\s*$/m.test(row.raw))
             ? readyLifecycle(visible)
-            : lifecycle('opt-in', true, visible, true, false, 'The tools plugin is mounted without Code Mode enabled.');
+            : lifecycle('opt-in', true, visible, true, false, 'The tools plugin is mounted without PTC mode enabled.');
     }
     if (tool.name === 'web_fetch') {
         if (!matching.some((row) => row.disabled !== true && /^\s+fetch:\s*true\s*$/m.test(row.raw))) {
@@ -105,6 +107,9 @@ export function resolveCapabilityLifecycle(tool, rows, visibleCapabilities) {
     if (tool.name === 'lsp') {
         return providerLifecycle(visible, rows.some((row) => /\/dsh-lsp-(?!tool)/.test(row.package) && row.disabled !== true), 'No operational LSP provider is mounted; use grep or glob as the native fallback.');
     }
+    if (tool.name.startsWith('stagehand_')) {
+        return lifecycle('requires-provider', true, visible, 'unknown', 'unknown', 'The browser plugin is mounted; a connected browser and its provider must be verified before use.');
+    }
     if (tool.name.startsWith('terminal_')) {
         return providerLifecycle(visible, rows.some((row) => /\/dsh-terminal-(?!tool)/.test(row.package) && row.disabled !== true), 'The terminal tool requires a mounted terminal provider.');
     }
@@ -113,7 +118,7 @@ export function resolveCapabilityLifecycle(tool, rows, visibleCapabilities) {
     }
     if (tool.package === '@deepseek-ai/dsh-tool-session-query') {
         const isSearch = tool.name === 'session_search' || tool.name === 'session_event_search';
-        const queryProvider = rows.find((row) => row.package === '@deepseek-ai/dsh-session-query-sqlite');
+        const queryProvider = rows.find((row) => row.package === '@deepseek-ai/dsh-session-query-sqlite' && row.disabled === false);
         const providerReady = queryProvider
             ? !isSearch || /^\s+openAt:\s*(?:startup|first-search)\s*$/m.test(queryProvider.raw)
             : false;

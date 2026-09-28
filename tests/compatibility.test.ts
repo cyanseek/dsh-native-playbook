@@ -3,7 +3,7 @@ import test from 'node:test'
 import { evaluateDshCompatibility, resolveActiveDshProfile } from '../src/api.js'
 
 test('allows only explicitly tested DSH versions to activate', () => {
-  const supported = evaluateDshCompatibility('dsh 0.1.0-rc.6\n')
+  const supported = evaluateDshCompatibility('dsh 0.1.7-rc.2\n')
   assert.equal(supported.state, 'supported')
   assert.equal(supported.activationAllowed, true)
 

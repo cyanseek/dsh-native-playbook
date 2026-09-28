@@ -38,3 +38,7 @@ Use this index to route by the user's intended outcome. Availability is profile-
 | Create recurring work | schedule tools | Requires the schedule package |
 
 If the task says “build a plugin” but the requested behavior maps above, explain and use the native path first.
+
+## DSH 0.1.7-rc.2 additions
+
+Use the capability lookup for plugin management, MCP resource discovery/read, Stagehand browser navigation/interaction/extraction, schedule updates, and workspace dependencies. Conditional `!!js` configuration is not proof of readiness. Browser tools require an operational browser/provider; PTC tool mode is `ptc` or `both`.

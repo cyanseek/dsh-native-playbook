@@ -2,15 +2,15 @@
   "_notice": "DO NOT EDIT BY HAND. Run pnpm sync:upstream.",
   "schemaVersion": 1,
   "sourceRepository": "https://github.com/deepseek-ai/deepseek-harness",
-  "upstreamCommit": "c291e7961a515f6d7af9304e7fd1d257929aef26",
-  "generatedAt": "2026-09-10T14:17:09.000Z",
+  "upstreamCommit": "477b4f420553e8a52c2fbccc464d7561b239c443",
+  "generatedAt": "2026-09-24T13:39:59.000Z",
   "sources": [
-    "https://github.com/deepseek-ai/deepseek-harness/blob/c291e7961a515f6d7af9304e7fd1d257929aef26/docs/tool-catalog.md",
-    "https://github.com/deepseek-ai/deepseek-harness/blob/c291e7961a515f6d7af9304e7fd1d257929aef26/docs/capability-seams.md",
-    "https://github.com/deepseek-ai/deepseek-harness/blob/c291e7961a515f6d7af9304e7fd1d257929aef26/docs/config-catalog.md",
-    "https://github.com/deepseek-ai/deepseek-harness/blob/c291e7961a515f6d7af9304e7fd1d257929aef26/packages/bundle/base/cordis.patch.yml",
-    "https://github.com/deepseek-ai/deepseek-harness/blob/c291e7961a515f6d7af9304e7fd1d257929aef26/packages/skill/skill-filesystem/README.md",
-    "https://github.com/deepseek-ai/deepseek-harness/blob/c291e7961a515f6d7af9304e7fd1d257929aef26/apps/cli/reference/README.md"
+    "https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/docs/tool-catalog.md",
+    "https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/docs/capability-seams.md",
+    "https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/docs/config-catalog.md",
+    "https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/bundle/base/cordis.patch.yml",
+    "https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/skill/skill-filesystem/README.md",
+    "https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/apps/cli/reference/README.md"
   ],
   "tools": {
     "ask_user_question": {
@@ -34,21 +34,12 @@
       ],
       "defaultStatus": "platform-dependent"
     },
-    "cordis_define": {
-      "name": "cordis_define",
-      "package": "@deepseek-ai/dsh-tool-cordis",
-      "requires": [
-        "tools",
-        "dynamicCordisRunner"
-      ],
-      "defaultStatus": "opt-in"
-    },
     "cordis_inspect_list": {
       "name": "cordis_inspect_list",
       "package": "@deepseek-ai/dsh-tool-cordis",
       "requires": [
         "tools",
-        "dynamicCordisRunner"
+        "cordisInspect"
       ],
       "defaultStatus": "opt-in"
     },
@@ -57,43 +48,7 @@
       "package": "@deepseek-ai/dsh-tool-cordis",
       "requires": [
         "tools",
-        "dynamicCordisRunner"
-      ],
-      "defaultStatus": "opt-in"
-    },
-    "cordis_inspect_self": {
-      "name": "cordis_inspect_self",
-      "package": "@deepseek-ai/dsh-tool-cordis",
-      "requires": [
-        "tools",
-        "dynamicCordisRunner"
-      ],
-      "defaultStatus": "opt-in"
-    },
-    "cordis_run": {
-      "name": "cordis_run",
-      "package": "@deepseek-ai/dsh-tool-cordis",
-      "requires": [
-        "tools",
-        "dynamicCordisRunner"
-      ],
-      "defaultStatus": "opt-in"
-    },
-    "cordis_stop": {
-      "name": "cordis_stop",
-      "package": "@deepseek-ai/dsh-tool-cordis",
-      "requires": [
-        "tools",
-        "dynamicCordisRunner"
-      ],
-      "defaultStatus": "opt-in"
-    },
-    "cordis_undefine": {
-      "name": "cordis_undefine",
-      "package": "@deepseek-ai/dsh-tool-cordis",
-      "requires": [
-        "tools",
-        "dynamicCordisRunner"
+        "cordisInspect"
       ],
       "defaultStatus": "opt-in"
     },
@@ -213,6 +168,24 @@
       ],
       "defaultStatus": "ready"
     },
+    "list_mcp_resource_templates": {
+      "name": "list_mcp_resource_templates",
+      "package": "@deepseek-ai/dsh-mcp-resources",
+      "requires": [
+        "tools",
+        "mcpResources"
+      ],
+      "defaultStatus": "ready"
+    },
+    "list_mcp_resources": {
+      "name": "list_mcp_resources",
+      "package": "@deepseek-ai/dsh-mcp-resources",
+      "requires": [
+        "tools",
+        "mcpResources"
+      ],
+      "defaultStatus": "ready"
+    },
     "list_subagent_models": {
       "name": "list_subagent_models",
       "package": "@deepseek-ai/dsh-tool-subagent",
@@ -224,6 +197,14 @@
       ],
       "defaultStatus": "ready"
     },
+    "load_workspace_dependencies": {
+      "name": "load_workspace_dependencies",
+      "package": "@deepseek-ai/dsh-tool-workspace-dependencies",
+      "requires": [
+        "tools"
+      ],
+      "defaultStatus": "opt-in"
+    },
     "lsp": {
       "name": "lsp",
       "package": "@deepseek-ai/dsh-tool-lsp",
@@ -233,6 +214,16 @@
         "systemPrompt"
       ],
       "defaultStatus": "opt-in"
+    },
+    "plugin_manager": {
+      "name": "plugin_manager",
+      "package": "@deepseek-ai/dsh-plugin-manager",
+      "requires": [
+        "tools",
+        "pluginManager",
+        "sandboxPolicy"
+      ],
+      "defaultStatus": "disabled"
     },
     "present": {
       "name": "present",
@@ -265,7 +256,7 @@
         "subagents",
         "systemPrompt"
       ],
-      "defaultStatus": "ready"
+      "defaultStatus": "disabled"
     },
     "read": {
       "name": "read",
@@ -291,12 +282,21 @@
       ],
       "defaultStatus": "ready"
     },
+    "read_mcp_resource": {
+      "name": "read_mcp_resource",
+      "package": "@deepseek-ai/dsh-mcp-resources",
+      "requires": [
+        "tools",
+        "mcpResources"
+      ],
+      "defaultStatus": "ready"
+    },
     "run_code": {
       "name": "run_code",
       "package": "@deepseek-ai/dsh-tools",
       "requires": [
         "tools",
-        "codeRuntime",
+        "ptcRuntime",
         "systemPrompt"
       ],
       "defaultStatus": "opt-in"
@@ -306,7 +306,7 @@
       "package": "@deepseek-ai/dsh-schedule",
       "requires": [
         "tools",
-        "sessions"
+        "schedule"
       ],
       "defaultStatus": "opt-in"
     },
@@ -315,7 +315,7 @@
       "package": "@deepseek-ai/dsh-schedule",
       "requires": [
         "tools",
-        "sessions"
+        "schedule"
       ],
       "defaultStatus": "opt-in"
     },
@@ -324,7 +324,16 @@
       "package": "@deepseek-ai/dsh-schedule",
       "requires": [
         "tools",
-        "sessions"
+        "schedule"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "schedule_update": {
+      "name": "schedule_update",
+      "package": "@deepseek-ai/dsh-schedule",
+      "requires": [
+        "tools",
+        "schedule"
       ],
       "defaultStatus": "opt-in"
     },
@@ -406,6 +415,72 @@
         "tools",
         "systemPrompt",
         "agentTeams"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "stagehand_act": {
+      "name": "stagehand_act",
+      "package": "@deepseek-ai/dsh-experimental-browser-use-stagehand-native",
+      "requires": [
+        "browserUse",
+        "agents",
+        "tools",
+        "systemPrompt"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "stagehand_extract": {
+      "name": "stagehand_extract",
+      "package": "@deepseek-ai/dsh-experimental-browser-use-stagehand-native",
+      "requires": [
+        "browserUse",
+        "agents",
+        "tools",
+        "systemPrompt"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "stagehand_navigate": {
+      "name": "stagehand_navigate",
+      "package": "@deepseek-ai/dsh-experimental-browser-use-stagehand-native",
+      "requires": [
+        "browserUse",
+        "agents",
+        "tools",
+        "systemPrompt"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "stagehand_observe": {
+      "name": "stagehand_observe",
+      "package": "@deepseek-ai/dsh-experimental-browser-use-stagehand-native",
+      "requires": [
+        "browserUse",
+        "agents",
+        "tools",
+        "systemPrompt"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "stagehand_screenshot": {
+      "name": "stagehand_screenshot",
+      "package": "@deepseek-ai/dsh-experimental-browser-use-stagehand-native",
+      "requires": [
+        "browserUse",
+        "agents",
+        "tools",
+        "systemPrompt"
+      ],
+      "defaultStatus": "opt-in"
+    },
+    "stagehand_tabs": {
+      "name": "stagehand_tabs",
+      "package": "@deepseek-ai/dsh-experimental-browser-use-stagehand-native",
+      "requires": [
+        "browserUse",
+        "agents",
+        "tools",
+        "systemPrompt"
       ],
       "defaultStatus": "opt-in"
     },
@@ -649,6 +724,11 @@
       "package": "@deepseek-ai/dsh-attachment-local",
       "disabled": false
     },
+    "authorization": {
+      "id": "authorization",
+      "package": "@deepseek-ai/dsh-authorization",
+      "disabled": false
+    },
     "bash-sandbox": {
       "id": "bash-sandbox",
       "package": "@deepseek-ai/dsh-bash-sandbox",
@@ -679,9 +759,19 @@
       "package": "@deepseek-ai/dsh-compaction-basic",
       "disabled": false
     },
+    "config-editor": {
+      "id": "config-editor",
+      "package": "@deepseek-ai/dsh-config-editor",
+      "disabled": "platform-dependent"
+    },
     "credentials": {
       "id": "credentials",
       "package": "@deepseek-ai/dsh-credentials-local",
+      "disabled": false
+    },
+    "deepseek-account": {
+      "id": "deepseek-account",
+      "package": "@deepseek-ai/dsh-deepseek-account-platform",
       "disabled": false
     },
     "deepseek-llm-api-extensions": {
@@ -711,8 +801,13 @@
     },
     "hmr": {
       "id": "hmr",
-      "package": "@deepseek-ai/cordis-plugin-hmr",
-      "disabled": true
+      "package": "@deepseek-ai/dsh-hmr",
+      "disabled": "platform-dependent"
+    },
+    "image-offload": {
+      "id": "image-offload",
+      "package": "@deepseek-ai/dsh-compaction-image-offload",
+      "disabled": false
     },
     "jobs": {
       "id": "jobs",
@@ -726,7 +821,12 @@
     },
     "llm-deepseek": {
       "id": "llm-deepseek",
-      "package": "@deepseek-ai/dsh-llm-deepseek",
+      "package": "@deepseek-ai/dsh-llm-deepseek-api-key",
+      "disabled": false
+    },
+    "llm-deepseek-account": {
+      "id": "llm-deepseek-account",
+      "package": "@deepseek-ai/dsh-llm-deepseek-account",
       "disabled": false
     },
     "llm-pi-ai": {
@@ -739,6 +839,11 @@
       "package": "@deepseek-ai/dsh-llm-retry",
       "disabled": false
     },
+    "mcp-resources": {
+      "id": "mcp-resources",
+      "package": "@deepseek-ai/dsh-mcp-resources",
+      "disabled": false
+    },
     "permission": {
       "id": "permission",
       "package": "@deepseek-ai/dsh-permission-presets",
@@ -749,9 +854,19 @@
       "package": "@deepseek-ai/dsh-plan-mode",
       "disabled": false
     },
+    "plugin-manager": {
+      "id": "plugin-manager",
+      "package": "@deepseek-ai/dsh-plugin-manager",
+      "disabled": "platform-dependent"
+    },
     "plugin-package-inventory-deepseek": {
       "id": "plugin-package-inventory-deepseek",
       "package": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+      "disabled": false
+    },
+    "ptc-runtime": {
+      "id": "ptc-runtime",
+      "package": "@deepseek-ai/dsh-ptc-runtime-node",
       "disabled": false
     },
     "pwsh-sandbox": {
@@ -826,8 +941,8 @@
     },
     "settings": {
       "id": "settings",
-      "package": "@deepseek-ai/dsh-settings-file",
-      "disabled": false
+      "package": "@deepseek-ai/dsh-settings",
+      "disabled": "platform-dependent"
     },
     "shell-env": {
       "id": "shell-env",
@@ -939,6 +1054,11 @@
       "package": "@deepseek-ai/dsh-tool-jobs",
       "disabled": false
     },
+    "tool-plugin-manager": {
+      "id": "tool-plugin-manager",
+      "package": "@deepseek-ai/dsh-plugin-manager/tools",
+      "disabled": true
+    },
     "tool-pwsh": {
       "id": "tool-pwsh",
       "package": "@deepseek-ai/dsh-tool-pwsh",
@@ -947,7 +1067,7 @@
     "tool-ralph": {
       "id": "tool-ralph",
       "package": "@deepseek-ai/dsh-tool-ralph",
-      "disabled": false
+      "disabled": true
     },
     "tool-result-pruner": {
       "id": "tool-result-pruner",
@@ -1034,9 +1154,9 @@
       "package": "@deepseek-ai/dsh-web-search-deepseek",
       "disabled": false
     },
-    "workflow-worker-thread": {
-      "id": "workflow-worker-thread",
-      "package": "@deepseek-ai/dsh-workflow-worker-thread",
+    "workflow-ptc": {
+      "id": "workflow-ptc",
+      "package": "@deepseek-ai/dsh-workflow-ptc",
       "disabled": false
     }
   }
